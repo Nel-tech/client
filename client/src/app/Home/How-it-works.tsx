@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Tab from "@/components/Tab";
-import { artistSteps, fanSteps } from "@/helper/mock";
-import { RolesTypes } from "@/helper/helper";
-import { Card, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { useState } from 'react';
+import Tab from '@/components/Tab';
+import { artistSteps, fanSteps } from '@/helper/mock';
+import { RolesTypes } from '@/helper/helper';
+import { Card, CardContent } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 import {
   containerVariants,
   itemVariants,
   titleVariants,
   scrollVariants,
-} from "@/components/Variants";
+} from '@/components/Variants';
 
 export function HowItWorksSection() {
-  const [activeTab, setActiveTab] = useState<RolesTypes>("artist");
-  const steps = activeTab === "artist" ? artistSteps : fanSteps;
+  const [activeTab, setActiveTab] = useState<RolesTypes>('artist');
+  const steps = activeTab === 'artist' ? artistSteps : fanSteps;
 
   return (
     <section id="how-it-works" className="w-full py-20 md:py-28">
@@ -37,7 +37,7 @@ export function HowItWorksSection() {
             How Tropiqk Works
           </motion.h2>
           <motion.p
-            className="mt-4 font-inter text-lg text-neutral-400"
+            className="mt-4 font-poppins text-lg text-neutral-400"
             variants={itemVariants}
           >
             A simple process for artists to grow and fans to earn. Select your
@@ -96,7 +96,7 @@ export function HowItWorksSection() {
                     <h3 className="text-2xl font-poppins font-bold text-white mb-4 group-hover:text-orange-300 transition-colors duration-300 leading-tight">
                       {step.headline}
                     </h3>
-                    <p className="text-zinc-400 font-inter text-base leading-relaxed group-hover:text-zinc-300 transition-colors duration-300">
+                    <p className="text-zinc-400 font-poppins text-base leading-relaxed group-hover:text-zinc-300 transition-colors duration-300">
                       {step.description}
                     </p>
                   </CardContent>

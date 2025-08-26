@@ -1,15 +1,15 @@
-"use client";
-import React from "react";
-import PromoterRow from "./PromoterRow";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
-import { TrendingUp, Users } from "lucide-react";
-import { motion } from "framer-motion";
+'use client';
+import React from 'react';
+import PromoterRow from './PromoterRow';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { TrendingUp, Users } from 'lucide-react';
+import { motion } from 'framer-motion';
 import {
   containerVariants,
   itemVariants,
   scrollVariants,
-} from "@/components/Variants";
+} from '@/components/Variants';
 
 // Sample chart data
 const chartData = [
@@ -44,7 +44,7 @@ const ArtistMockup = () => (
       >
         {/* Status Bar */}
         <motion.div
-          className="flex font-inter justify-between items-center text-xs text-gray-400 mb-2 md:text-xs md:mb-2 sm:text-[10px] sm:mb-1.5 max-sm:text-[9px] max-sm:mb-1"
+          className="flex font-poppins justify-between items-center text-xs text-gray-400 mb-2 md:text-xs md:mb-2 sm:text-[10px] sm:mb-1.5 max-sm:text-[9px] max-sm:mb-1"
           variants={itemVariants}
         >
           <span>9:41</span>
@@ -52,11 +52,11 @@ const ArtistMockup = () => (
             <div className="w-1 h-1 bg-orange-400 rounded-full animate-pulse" />
             <div
               className="w-1 h-1 bg-orange-400 rounded-full animate-pulse"
-              style={{ animationDelay: "0.5s" }}
+              style={{ animationDelay: '0.5s' }}
             />
             <div
               className="w-1 h-1 bg-orange-400 rounded-full animate-pulse"
-              style={{ animationDelay: "1s" }}
+              style={{ animationDelay: '1s' }}
             />
           </div>
         </motion.div>
@@ -78,7 +78,7 @@ const ArtistMockup = () => (
                 iCloud
               </h3>
               <div className="flex items-center gap-2">
-                <span className="text-orange-400 text-xs font-inter">
+                <span className="text-orange-400 text-xs font-poppins">
                   Pro Artist
                 </span>
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
@@ -86,10 +86,12 @@ const ArtistMockup = () => (
             </div>
           </div>
           <div className="text-right">
-            <div className="text-orange-400 font-bold text-lg font-inter">
+            <div className="text-orange-400 font-bold text-lg font-poppins">
               2.4K
             </div>
-            <div className="text-gray-400 text-xs font-inter">Total Streams</div>
+            <div className="text-gray-400 text-xs font-poppins">
+              Total Streams
+            </div>
           </div>
         </motion.div>
 
@@ -100,7 +102,7 @@ const ArtistMockup = () => (
             variants={itemVariants}
           >
             <Users className="w-4 h-4 text-orange-400" />
-            <span className="font-inter text-sm text-gray-300 font-medium">
+            <span className="font-poppins text-sm text-gray-300 font-medium">
               Top Promoters
             </span>
             <div className="flex-1 h-px bg-gradient-to-r from-orange-500/30 to-transparent" />
@@ -155,7 +157,9 @@ const ArtistMockup = () => (
         <motion.div className="h-24 relative" variants={itemVariants}>
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-orange-400" />
-            <span className="text-xs text-gray-400 font-inter">Performance</span>
+            <span className="text-xs text-gray-400 font-poppins">
+              Performance
+            </span>
           </div>
           <div className="h-16 relative rounded-lg overflow-hidden bg-gradient-to-b from-orange-500/5 to-transparent">
             <ResponsiveContainer width="100%" height="100%">

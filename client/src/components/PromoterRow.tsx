@@ -2,7 +2,13 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PromoterRowProps } from '@/helper/helper';
 
-const PromoterRow = ({ avatar, username, streams, growth, rank }:PromoterRowProps) => (
+const PromoterRow = ({
+  avatar,
+  username,
+  streams,
+  growth,
+  rank,
+}: PromoterRowProps) => (
   <Card className="bg-white/5 backdrop-blur-sm border-white/10 p-3 hover:bg-white/10 transition-all duration-300 group">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -20,18 +26,26 @@ const PromoterRow = ({ avatar, username, streams, growth, rank }:PromoterRowProp
           )}
         </div>
         <div className="flex flex-col">
-          <span className="text-white text-sm font-medium font-inter">{username}</span>
+          <span className="text-white text-sm font-medium font-poppins">
+            {username}
+          </span>
           <div className="w-16 h-1 bg-gray-700 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full transition-all duration-1000"
-              style={{ width: `${Math.min(parseInt(streams.replace(/[^\d]/g, '')) / 20, 100)}%` }}
+              style={{
+                width: `${Math.min(parseInt(streams.replace(/[^\d]/g, '')) / 20, 100)}%`,
+              }}
             />
           </div>
         </div>
       </div>
       <div className="text-right">
-        <div className="text-white font-semibold text-sm font-inter">{streams}</div>
-        <div className={`text-xs font-medium font-inter ${growth.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
+        <div className="text-white font-semibold text-sm font-poppins">
+          {streams}
+        </div>
+        <div
+          className={`text-xs font-medium font-poppins ${growth.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}
+        >
           {growth}
         </div>
       </div>
@@ -39,4 +53,4 @@ const PromoterRow = ({ avatar, username, streams, growth, rank }:PromoterRowProp
   </Card>
 );
 
-export default PromoterRow
+export default PromoterRow;
