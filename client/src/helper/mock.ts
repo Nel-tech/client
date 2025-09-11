@@ -90,28 +90,28 @@ export const FAQ = [
   // --- Questions for Artists ---
   {
     id: 'artist-1',
-    category: 'artist',
+    category: 'Artist',
     question: 'How do I get my music on Tropiqk?',
     answer:
       "You don't upload music files directly! Simply create an artist profile and add the public links to your tracks from YouTube. We handle the rest, embedding the player so every listen on Tropiqk counts as a real stream on your YouTube channel.",
   },
   {
     id: 'artist-2',
-    category: 'artist',
+    category: 'Artist',
     question: 'How do I know which fans are promoting me?',
     answer:
       'The Artist Dashboard is your command center. Even on our free BASIC plan, you can see a leaderboard of your Top 5 promoters. By upgrading to a PRO plan, you unlock the full list and can see which fans are promoting specific tracks.',
   },
   {
     id: 'artist-3',
-    category: 'artist',
+    category: 'Artist',
     question: 'Are the streams real? How does this help me?',
     answer:
       'Yes, absolutely. Because we use the official YouTube embedded player, every valid listen (30 seconds+) on Tropiqk is registered as a legitimate view on your YouTube video. This directly boosts your visibility, watch time, and helps you grow your channel organically.',
   },
   {
     id: 'artist-4',
-    category: 'artist',
+    category: 'Artist',
     question: 'What is a "Double Coins" Campaign?',
     answer:
       "This is a powerful promotional tool available to our ULTIMATE tier artists. You can select one of your tracks to temporarily offer double the coin rewards to fans who share it. It's the perfect way to supercharge promotion for a new single.",
@@ -120,28 +120,28 @@ export const FAQ = [
   // --- Questions for Fans ---
   {
     id: 'fan-1',
-    category: 'fan',
+    category: 'Fan',
     question: 'How do I earn coins?',
     answer:
       "It's simple! For any track on Tropiqk, you can generate a unique share link. When you share that link and someone clicks on it and listens to the track for at least 30 seconds, you automatically earn Tropiqk Coins in your account.",
   },
   {
     id: 'fan-2',
-    category: 'fan',
+    category: 'Fan',
     question: 'What can I use my coins for?',
     answer:
       'Your coins have real value. You can redeem them directly within the app for mobile airtime on major networks. We are always working on adding new and exciting rewards for our community!',
   },
   {
     id: 'fan-3',
-    category: 'fan',
+    category: 'Fan',
     question: 'Does it cost me anything to be a fan?',
     answer:
       'No, being a fan on Tropiqk is completely free! You can discover new music, share tracks, earn coins, and redeem rewards without ever paying anything. Your support for artists is what powers the platform.',
   },
   {
     id: 'fan-4',
-    category: 'fan',
+    category: 'Fan',
     question: "What if I share a link and don't get coins?",
     answer:
       "For a view to be valid and earn you coins, the listener must watch for at least 30 seconds. If they click away too soon, the view won't be counted. Some artists on our ULTIMATE plan may also offer higher coin rewards on specific tracks!",

@@ -6,14 +6,14 @@ import clsx from 'clsx';
 export default function Tab({ activeTab, setActiveTab }: TabProps) {
   return (
     <Tabs
-      defaultValue="artist"
+      defaultValue="Artist"
       value={activeTab}
       onValueChange={(val) => setActiveTab(val as RolesTypes)}
       className="mt-12 flex justify-center items-center mx-auto text-center"
     >
       <TabsList className="relative bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-xl p-1.5 gap-2 shadow-2xl">
         <TabsTrigger
-          value="artist"
+          value="Artist"
           className={clsx(
             'relative cursor-pointer px-8 py-4 text-base font-poppins font-semibold rounded-lg transition-all duration-500 ease-out',
             'overflow-hidden group min-w-[140px]',

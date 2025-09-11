@@ -35,7 +35,7 @@ const MusicCard = ({ img, song, artist }: MusicCardProps) => (
 
 export default function DiscoverSection() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 font-poppins">
       {Object.entries(sampleData ).map(([title, items], idx) => (
         <section key={idx} className="w-full">
           {/* Section Header */}

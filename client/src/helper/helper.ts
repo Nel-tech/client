@@ -1,4 +1,4 @@
-export type RolesTypes = 'Artist' | 'Fan';
+export type RolesTypes = 'Artist' | 'Fans';
 
 export interface TabProps {
   activeTab: RolesTypes;
@@ -46,6 +46,18 @@ export interface MusicCardProps {
   song: string;
   artist: string;
 }
+
+ interface Artist{
+  fullname:string;
+  stagename: string;
+  bio: string
+  genre:string
+}
+export type OnboardingResponse = {
+  artist: Artist;
+  role: Extract<RolesTypes, 'Artist'>;
+};
+
 
 // export interface HowItWorksSteps{
 //     number: string;

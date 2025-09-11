@@ -4,38 +4,32 @@ import { motion } from 'framer-motion';
 import { logoVariants } from '@/components/Variants';
 import Link from 'next/link';
 import GoogleButton from '@/components/GoogleButtons';
-import { useSearchParams, useRouter } from 'next/navigation';
 import BaseFooter from '@/components/BaseFooter';
-import { useRegister } from '@/lib/queries/auth-queries';
+import { useLogin } from '@/lib/queries/auth-queries';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegistrationSchema, TRegistrationSchema } from '@/lib/validators/auth';
+import { LoginSchema, TLoginSchema } from '@/lib/validators/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import {  useRouter } from 'next/navigation';
 
-const Register = () => {
-  const router = useRouter();
-  const roleParams = useSearchParams();
-  const role = roleParams.get('role');
-
-  const validRole = role === 'Fans' || role === 'Artist' ? role : undefined;
-  
+const Signup = () => {
+ 
+    const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TRegistrationSchema>({
-    resolver: zodResolver(RegistrationSchema),
-    defaultValues: {
-      role: validRole,
-    },
+  } = useForm<TLoginSchema>({
+    resolver: zodResolver(LoginSchema),
+   
   });
 
-  const { mutate: registerUser, isPending } = useRegister({
+  const { mutate: registerUser, isPending } = useLogin({
     onSuccess: (user) => {
       toast.success(
-        `Welcome, ${user?.username}! Your account has been created.`,
+        `Welcome, Back ${user?.username}!`,
         { duration: 1000 }
       );
 
@@ -47,15 +41,9 @@ const Register = () => {
     },
   });
 
-  const onSubmit = (formData: TRegistrationSchema) => {
-    if (!validRole) {
-      toast.error('Invalid or missing role in URL.');
-      return;
-    }
-
+  const onSubmit = (formData: TLoginSchema) => {
     const completeFormData = {
       ...formData,
-      role: validRole as 'Fans' | 'Artist',
     };
 
     registerUser(completeFormData);
@@ -79,27 +67,12 @@ const Register = () => {
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div>
           <h1 className="text-xl text-white text-center font-poppins tracking-wide">
-            Creating a {validRole || 'New'} Account
+            Login to your Account
           </h1>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* --- USERNAME --- */}
-            <div>
-              <label htmlFor="username" className="block font-poppins mb-1 text-sm text-gray-300">
-                Username
-              </label>
-              <Input
-                id="username"
-                type="text"
-                {...register("username")}
-                className="border border-gray-600 font-poppins bg-transparent text-white placeholder-gray-400 focus:border-blue-500 focus:ring-0"
-                disabled={isPending}
-              />
-              {errors.username && (
-                <p className="text-red-500 text-sm font-poppins">{errors.username.message}</p>
-              )}
-            </div>
+           
 
             {/* --- EMAIL --- */}
             <div>
@@ -135,28 +108,41 @@ const Register = () => {
               )}
             </div>
 
+            {/* --- REMEMBER ME --- */}
+    <div className="flex items-center justify-between">
+      <label className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          {...register("rememberMe")}
+          className="h-4 w-4 text-blue-500 border-gray-600 rounded focus:ring-blue-500"
+        />
+        <span className="text-sm text-gray-300 font-poppins">Remember me</span>
+      </label>
+    </div>
+
             <div>
               <Button 
                 type="submit" 
                 disabled={isPending} 
                 className="cursor-pointer font-poppins w-full sm:w-auto bg-[#FF6B35] text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isPending ? "Creating Account..." : "Create Account"}
+                {isPending ? "Logging In..." : "Login"}
               </Button>
             </div>
           </form>
 
           {/* <GoogleButton text="Sign up with Google" /> */}
 
-          <p className="mt-6 text-center font-poppins text-sm text-gray-500 dark:text-gray-400">
-            Already have an account?{' '}
-            <Link
-              href="/auth/login"
-              className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Sign in
-            </Link>
-          </p>
+         <p className="mt-6 text-center font-poppins text-sm text-gray-500 dark:text-gray-400">
+  Don’t have an account?{" "}
+  <Link
+    href="/auth/signup"
+    className="font-semibold text-[#FF6B35]"
+  >
+    Create one
+  </Link>
+</p>
+
         </div>
       </div>
 
@@ -167,4 +153,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Signup;

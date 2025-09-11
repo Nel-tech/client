@@ -99,7 +99,7 @@ export function HeroSection() {
               >
                 <Button
                   size="lg"
-                  className="cursor-pointer w-full sm:w-auto bg-[#FF6B35] text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl active:shadow-md"
+                  className="cursor-pointer font-poppins w-full sm:w-auto bg-[#FF6B35] text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl active:shadow-md"
                 >
                   Sign Up as an Artist
                 </Button>
