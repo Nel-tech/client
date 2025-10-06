@@ -1,0 +1,17 @@
+<svg width="800" height="200" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gray gradient -->
+    <linearGradient id="tropiqk-gradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d1d5db"></stop> <!-- light gray -->
+      <stop offset="100%" stop-color="#4b5563"></stop> <!-- dark gray -->
+    </linearGradient>
+  </defs>
+
+  <!-- Background (optional, remove if you want transparent) -->
+  <rect width="100%" height="100%" fill="#111111"></rect>
+
+  <!-- Text -->
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Poppins, sans-serif" font-size="120" font-weight="900" fill="url(#tropiqk-gradient)">
+    Tropiqk
+  </text>
+</svg>
