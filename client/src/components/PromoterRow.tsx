@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PromoterRowProps } from '@/helper/helper';
+import { PromoterRowProps } from '@/helper/type';
 
 const PromoterRow = ({
   avatar,

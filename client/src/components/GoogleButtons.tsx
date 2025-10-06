@@ -1,5 +1,5 @@
 'use client';
-import { GoogleProps } from '../helper/helper';
+import { GoogleProps } from '../helper/type';
 import Image from 'next/image';
 
 const GoogleButton = ({ text }: GoogleProps) => {

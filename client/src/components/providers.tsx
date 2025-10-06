@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState, useEffect } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
-  const { initializeAuth, initialized, loading } = useAuthStore();
+  const { initializeAuth, initialized, loading, user } = useAuthStore();
 
   useEffect(() => {
-    // Only initialize if not already initialized and not currently loading
     if (!initialized && !loading) {
       initializeAuth();
     }
-  }, [initializeAuth, initialized, loading]);
+  }, [user, initializeAuth, initialized, loading]);
+
+  useEffect(() => {}, [initialized, loading, user]);
 
   const [queryClient] = useState(
     () =>

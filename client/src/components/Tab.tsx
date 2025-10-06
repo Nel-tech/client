@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TabProps } from '@/helper/helper';
-import { RolesTypes } from '@/helper/helper';
+import { TabProps } from '@/helper/type';
+import { RolesTypes } from '@/helper/type';
 import clsx from 'clsx';
 
 export default function Tab({ activeTab, setActiveTab }: TabProps) {

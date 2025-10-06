@@ -1,4 +1,4 @@
-import { FeatureProps } from '@/helper/helper';
+import { FeatureProps } from '@/helper/type';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

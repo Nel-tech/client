@@ -108,7 +108,7 @@ export function Nav() {
             whileHover="hover"
             whileTap="tap"
           >
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button
                 variant="outline"
                 className="font-poppins cursor-pointer border-2 border-neutral-700 text-neutral-300 font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 ease-in-out hover:bg-neutral-800 hover:text-white hover:border-neutral-600"

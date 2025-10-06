@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useAuthUser } from "@/store/useAuthStore";
-import { Button } from "@/components/ui/button"; 
+import { useRouter } from 'next/navigation';
+import { useAuthUser } from '@/store/useAuthStore';
+import { Button } from '@/components/ui/button';
 
 export default function Unauthorized() {
   const router = useRouter();
@@ -10,15 +10,15 @@ export default function Unauthorized() {
 
   const handleBack = () => {
     if (user) {
-      if (user?.role ==="Fans") {
-        router.push("/fans/dashboard");
-      } else if (user.role === "Artist") {
-        router.push("/artists/dashboard");
+      if (user?.role === 'Fans') {
+        router.push('/fans/dashboard');
+      } else if (user.role === 'Artist') {
+        router.push('/artists/dashboard');
       } else {
-        router.push("/auth/login"); 
+        router.push('/auth/login');
       }
     } else {
-      router.push("/auth/login");
+      router.push('/auth/login');
     }
   };
 

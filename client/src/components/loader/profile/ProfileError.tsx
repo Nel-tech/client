@@ -9,17 +9,18 @@ export const ProfileError = ({ onRetry }: { onRetry?: () => void }) => {
           <AlertCircle className="w-12 h-12 text-red-500" />
         </div>
       </div>
-      
+
       {/* Error Message */}
       <div className="text-center mb-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
           Failed to Load Profile
         </h3>
         <p className="text-gray-600 text-sm">
-          We couldn&apos;t load your profile information. Please check your connection and try again.
+          We couldn&apos;t load your profile information. Please check your
+          connection and try again.
         </p>
       </div>
-      
+
       {/* Retry Button */}
       {onRetry && (
         <div className="flex justify-center">
@@ -32,7 +33,7 @@ export const ProfileError = ({ onRetry }: { onRetry?: () => void }) => {
           </button>
         </div>
       )}
-      
+
       {/* Fallback Profile Layout */}
       <div className="mt-8 opacity-30">
         <div className="flex justify-center mb-4">

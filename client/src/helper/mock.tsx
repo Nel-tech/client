@@ -5,8 +5,13 @@ import {
   Smartphone,
   Link,
   Users,
+  Volume2,
+  Music,
+  User,
   BarChart3,
 } from 'lucide-react';
+
+import { Tracks, Fan } from './type';
 export const artistSteps = [
   {
     number: '01',
@@ -197,3 +202,99 @@ export const sampleData = {
     { img: '/images/placeholder.png', song: 'Vibe', artist: 'Tekno' },
   ],
 };
+
+export const stats = [
+  { value: '2,847', label: 'Total Fans' },
+  { value: '15,234', label: 'Total Shares' },
+  { value: '89,432', label: 'Streams Boosted' },
+];
+
+export const tracks: Tracks[] = [
+  {
+    id: '1',
+    title: 'Summer Vibes',
+    platform: 'YouTube',
+    shares: 234,
+    streams: 12500,
+    goal: 500,
+    isActive: true,
+    thumbnail:
+      'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+  },
+  {
+    id: '2',
+    title: 'Midnight Dreams',
+    platform: 'Audiomack',
+    shares: 156,
+    streams: 8900,
+    goal: 300,
+    isActive: false,
+    thumbnail:
+      'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=100&h=100&fit=crop',
+  },
+  {
+    id: '3',
+    title: 'City Lights',
+    platform: 'SoundCloud',
+    shares: 89,
+    streams: 5600,
+    goal: 200,
+    isActive: false,
+    thumbnail:
+      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop',
+  },
+];
+
+export const topFans: Fan[] = [
+  {
+    id: '1',
+    name: 'Sarah M.',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop',
+    shares: 45,
+    rank: 1,
+  },
+  {
+    id: '2',
+    name: 'Mike J.',
+    avatar:
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop',
+    shares: 38,
+    rank: 2,
+  },
+  {
+    id: '3',
+    name: 'Emma K.',
+    avatar:
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop',
+    shares: 32,
+    rank: 3,
+  },
+  {
+    id: '4',
+    name: 'Alex R.',
+    avatar:
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop',
+    shares: 28,
+    rank: 4,
+  },
+];
+
+export const profileTasks = [
+  { id: 1, task: 'Upload profile picture', completed: true },
+  { id: 2, task: 'Fill out bio', completed: true },
+  { id: 3, task: 'Select genres', completed: true },
+  { id: 4, task: 'Upload first track', completed: false },
+  { id: 5, task: 'Add social links', completed: false },
+];
+
+export const sidebarItems = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    icon: <BarChart3 className="h-5 w-5" />,
+  },
+  { id: 'tracks', label: 'Tracks', icon: <Music className="h-5 w-5" /> },
+  { id: 'fans', label: 'Fans', icon: <Users className="h-5 w-5" /> },
+  { id: 'profile', label: 'Profile', icon: <User className="h-5 w-5" /> },
+];

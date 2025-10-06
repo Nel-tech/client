@@ -1,6 +1,6 @@
 import React from 'react';
 // Assuming FloatingCoinProps is correctly defined in your helper file
-import { FloatingCoinProps } from '@/helper/helper';
+import { FloatingCoinProps } from '@/helper/type';
 import { Card } from '@/components/ui/card';
 
 // The FloatingCoin component remains the same. It's perfect.

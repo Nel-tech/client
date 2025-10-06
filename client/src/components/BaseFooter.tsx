@@ -15,4 +15,4 @@ function BaseFooter() {
     </footer>
   );
 }
-export default BaseFooter
+export default BaseFooter;

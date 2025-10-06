@@ -18,10 +18,8 @@ export default function DashboardLayout({
   onSectionChange,
   isLoading = false,
 }: DashboardLayoutProps) {
-  
   return (
     <div className="flex h-screen">
-      
       {isLoading ? (
         <SidebarSkeleton />
       ) : (
@@ -36,9 +34,7 @@ export default function DashboardLayout({
         {isLoading ? (
           <ContentSkeleton />
         ) : (
-          <div className="p-6 text-white">
-            {children}
-          </div>
+          <div className="p-6 text-white">{children}</div>
         )}
       </main>
     </div>

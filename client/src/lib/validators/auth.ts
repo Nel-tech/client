@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
 export const RegistrationSchema = z.object({
-  username: z
-    .string(),
+  username: z.string().min(1, { message: 'Please enter a username' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z
     .string()
@@ -24,14 +23,11 @@ export const LoginSchema = z.object({
 export type TLoginSchema = z.infer<typeof LoginSchema>;
 
 export const OnboardingSchema = z.object({
-  fullname: z.string().min(1, { message: 'Please enter your full name.' }),
-  stagename: z.string().min(1, { message: 'Stage name is required.' }),
+  fullName: z.string().min(1, { message: 'Please enter your full name.' }),
+  stageName: z.string().min(1, { message: 'Stage name is required.' }), // Changed to camelCase
   bio: z.string().min(3, { message: 'Bio must be at least 3 characters.' }),
-
-  genre: z.string().min(10, { message: 'Please enter your genre' }),
-  role: z.enum(['Fans', 'Artist'], {
-    message: 'Role is required',
+  genre: z.enum(['Afrobeats', 'Hip-Hop'], {
+    message: 'Please select a genre',
   }),
 });
-
 export type TOnboardingSchema = z.infer<typeof OnboardingSchema>;

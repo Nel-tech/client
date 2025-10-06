@@ -10,8 +10,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { sampleData } from '@/helper/mock';
-import { MusicCardProps } from '@/helper/helper';
-
+import { MusicCardProps } from '@/helper/type';
 
 const MusicCard = ({ img, song, artist }: MusicCardProps) => (
   <Card className="w-full bg-neutral-900 border-neutral-800 rounded-xl hover:scale-105 transition-transform">
@@ -31,12 +30,10 @@ const MusicCard = ({ img, song, artist }: MusicCardProps) => (
   </Card>
 );
 
-
-
 export default function DiscoverSection() {
   return (
     <div className="space-y-12 font-poppins">
-      {Object.entries(sampleData ).map(([title, items], idx) => (
+      {Object.entries(sampleData).map(([title, items], idx) => (
         <section key={idx} className="w-full">
           {/* Section Header */}
           <div className="flex items-center justify-between mb-6">

@@ -1,14 +1,14 @@
 // /fans/dashboard/page.tsx
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import DashboardLayout from "@/components/DashboardLayout";
-import ProtectedRoute from "@/middlewares/ProtectedRoutes";
+import { useState, useEffect } from 'react';
+import DashboardLayout from '@/components/DashboardLayout';
+import ProtectedRoute from '@/middlewares/ProtectedRoutes';
 
-import DiscoverContent from "../discover/page";
-import ArtistContent from "../artist/page";
-import RewardContent from "../rewards/page";
-import UserProfileInterface from "../profile/page";
+import DiscoverContent from '../discover/page';
+import ArtistContent from '../artist/page';
+import RewardContent from '../rewards/page';
+import UserProfileInterface from '../profile/page';
 
 const contentComponents = {
   discover: DiscoverContent,
@@ -18,7 +18,7 @@ const contentComponents = {
 };
 
 export default function DashboardPage() {
-  const [activeSection, setActiveSection] = useState("discover");
+  const [activeSection, setActiveSection] = useState('discover');
   const [minLoadingComplete, setMinLoadingComplete] = useState(false);
 
   // only for your custom "minimum loading" effect
@@ -32,11 +32,11 @@ export default function DashboardPage() {
     DiscoverContent;
 
   return (
-    <ProtectedRoute redirectTo="/auth/login">
+    <ProtectedRoute>
       <DashboardLayout
         activeSection={activeSection}
         onSectionChange={setActiveSection}
-        isLoading={!minLoadingComplete} // ✅ only your timer loading
+        isLoading={!minLoadingComplete}
       >
         <ActiveComponent />
       </DashboardLayout>

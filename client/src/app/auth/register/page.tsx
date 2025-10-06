@@ -1,9 +1,8 @@
-'use client'
+'use client';
 import { TropiqkLogo } from '@/components/Logo';
 import { motion } from 'framer-motion';
 import { logoVariants } from '@/components/Variants';
 import Link from 'next/link';
-import GoogleButton from '@/components/GoogleButtons';
 import { useSearchParams, useRouter } from 'next/navigation';
 import BaseFooter from '@/components/BaseFooter';
 import { useRegister } from '@/lib/queries/auth-queries';
@@ -13,6 +12,8 @@ import { RegistrationSchema, TRegistrationSchema } from '@/lib/validators/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/store/useAuthStore';
+
 
 const Register = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const Register = () => {
   const role = roleParams.get('role');
 
   const validRole = role === 'Fans' || role === 'Artist' ? role : undefined;
-  
+
   const {
     register,
     handleSubmit,
@@ -32,41 +33,39 @@ const Register = () => {
     },
   });
 
-  const { mutate: registerUser, isPending } = useRegister({
-    onSuccess: (user) => {
-      toast.success(
-        `Welcome, ${user?.username}! Your account has been created.`,
-        { duration: 1000 }
-      );
-
-      if (user?.role === 'Artist') {
-        router.push('/onboarding');
-      } else {
-        router.push('/fans/dashboard');
-      }
-    },
-  });
-
-  const onSubmit = (formData: TRegistrationSchema) => {
-    if (!validRole) {
-      toast.error('Invalid or missing role in URL.');
-      return;
+  const {
+  mutate: registerUser,
+  isPending,
+} = useRegister({
+  onSuccess: () => {
+    const email = useAuthStore.getState().pendingVerificationEmail;
+    if (email) {
+      toast.success('Registration successful! Check your email for verification code.');
+      router.push(`/auth/emailVerification?email=${encodeURIComponent(email)}`);
     }
+  },
+});
 
-    const completeFormData = {
-      ...formData,
-      role: validRole as 'Fans' | 'Artist',
-    };
+const onSubmit = (formData: TRegistrationSchema) => {
+  if (!validRole) {
+    toast.error('Invalid or missing role in URL.');
+    return;
+  }
 
-    registerUser(completeFormData);
+  const completeFormData = {
+    ...formData,
+    role: validRole as 'Fans' | 'Artist',
   };
+
+  registerUser(completeFormData);
+};
+
   return (
     <>
       <nav
         aria-label="Global"
         className="container mx-auto flex items-center justify-between p-6 lg:px-8"
       >
-        {/* Logo */}
         <motion.div className="flex lg:flex-1" variants={logoVariants}>
           <Link href="/" className="-m-1.5 p-1.5">
             <motion.div whileHover="hover" variants={logoVariants}>
@@ -84,75 +83,85 @@ const Register = () => {
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* --- USERNAME --- */}
             <div>
-              <label htmlFor="username" className="block font-poppins mb-1 text-sm text-gray-300">
+              <label
+                htmlFor="username"
+                className="block font-poppins mb-1 text-sm text-gray-300"
+              >
                 Username
               </label>
               <Input
                 id="username"
                 type="text"
-                {...register("username")}
+                {...register('username')}
                 className="border border-gray-600 font-poppins bg-transparent text-white placeholder-gray-400 focus:border-blue-500 focus:ring-0"
                 disabled={isPending}
               />
               {errors.username && (
-                <p className="text-red-500 text-sm font-poppins">{errors.username.message}</p>
+                <p className="text-red-500 text-sm font-poppins">
+                  {errors.username.message}
+                </p>
               )}
             </div>
 
-            {/* --- EMAIL --- */}
             <div>
-              <label htmlFor="email" className="block font-poppins mb-1 text-sm text-gray-300">
+              <label
+                htmlFor="email"
+                className="block font-poppins mb-1 text-sm text-gray-300"
+              >
                 Email address
               </label>
               <Input
                 id="email"
                 type="email"
-                {...register("email")}
+                {...register('email')}
                 className="border border-gray-600 font-poppins bg-transparent text-white placeholder-gray-400 focus:border-blue-500 focus:ring-0"
                 disabled={isPending}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm font-poppins">{errors.email.message}</p>
+                <p className="text-red-500 text-sm font-poppins">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
-            {/* --- PASSWORD --- */}
             <div>
-              <label htmlFor="password" className="block font-poppins mb-1 text-sm text-gray-300">
+              <label
+                htmlFor="password"
+                className="block font-poppins mb-1 text-sm text-gray-300"
+              >
                 Password
               </label>
               <Input
                 id="password"
                 type="password"
-                {...register("password")}
+                {...register('password')}
                 className="border font-poppins border-gray-600 bg-transparent text-white placeholder-gray-400 focus:border-blue-500 focus:ring-0"
                 disabled={isPending}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm font-poppins">{errors.password.message}</p>
+                <p className="text-red-500 text-sm font-poppins">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
             <div>
-              <Button 
-                type="submit" 
-                disabled={isPending} 
-                className="cursor-pointer font-poppins w-full sm:w-auto bg-[#FF6B35] text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="cursor-pointer font-poppins w-full bg-[#FF6B35] text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isPending ? "Creating Account..." : "Create Account"}
+                {isPending ? 'Creating Account...' : 'Create Account'}
               </Button>
             </div>
           </form>
-
-          {/* <GoogleButton text="Sign up with Google" /> */}
 
           <p className="mt-6 text-center font-poppins text-sm text-gray-500 dark:text-gray-400">
             Already have an account?{' '}
             <Link
               href="/auth/login"
-              className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+              className="font-semibold text-[#FF6B35] hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
             >
               Sign in
             </Link>

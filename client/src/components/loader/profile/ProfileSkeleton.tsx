@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 // Loading Skeleton Component
 export const ProfileSkeleton = () => {
   return (
@@ -9,19 +8,19 @@ export const ProfileSkeleton = () => {
       <div className="flex justify-center mb-6">
         <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
       </div>
-      
+
       {/* Name Skeleton */}
       <div className="mb-4">
         <div className="h-3 bg-gray-300 rounded w-16 mb-2"></div>
         <div className="h-6 bg-gray-300 rounded w-32 mx-auto"></div>
       </div>
-      
+
       {/* Email Skeleton */}
       <div className="mb-4">
         <div className="h-3 bg-gray-300 rounded w-12 mb-2"></div>
         <div className="h-5 bg-gray-300 rounded w-48 mx-auto"></div>
       </div>
-      
+
       {/* Referral Link Skeleton */}
       <div className="mb-4">
         <div className="h-3 bg-gray-300 rounded w-20 mb-2"></div>

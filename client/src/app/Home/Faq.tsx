@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/accordion';
 import Tab from '@/components/Tab';
 import { FAQ } from '@/helper/mock';
-import { RolesTypes } from '@/helper/helper';
+import { RolesTypes } from '@/helper/type';
 
 export function FAQSection() {
   const [activeCategory, setActiveCategory] = useState<RolesTypes>('Artist');

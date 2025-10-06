@@ -1,12 +1,26 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Copy, Check, User, Mail, Link, Gift, AlertTriangle } from 'lucide-react';
+import {
+  Copy,
+  Check,
+  User,
+  Mail,
+  Link,
+  Gift,
+  AlertTriangle,
+} from 'lucide-react';
 
 import { ProfileSkeleton } from '@/components/loader/profile/ProfileSkeleton';
 import { ProfileError } from '@/components/loader/profile/ProfileError';
@@ -14,35 +28,34 @@ import { getCurrentUser } from '@/lib/api';
 export default function UserProfileInterface() {
   const [copied, setCopied] = useState(false);
 
- const { data: user, isLoading, isError, refetch } = useAuthStore()
-  const referralLink = user?.user?.referralCode
+  const { data: user, isLoading, isError, refetch } = useAuthStore();
+  const referralLink = user?.user?.referralCode;
 
-  if(isLoading){
-return <ProfileSkeleton/>
+  if (isLoading) {
+    return <ProfileSkeleton />;
   }
-  
-if(isError){ 
-  return <ProfileError onRetry={() => refetch()} />
-}
+
+  if (isError) {
+    return <ProfileError onRetry={() => refetch()} />;
+  }
   const copyReferralLink = async () => {
+    if (!referralLink) {
+      console.error('No referral code available');
+      return;
+    }
 
-  if (!referralLink) {
-    console.error('No referral code available');
-    return;
-  }
-
-  try {
-    await navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  } catch (err) {
-    console.error('Failed to copy: ', err);
-  }
-};
-  const getInitials = (name:string) => {
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+  const getInitials = (name: string) => {
     return name
       .split(' ')
-      .map(word => word.charAt(0))
+      .map((word) => word.charAt(0))
       .join('')
       .toUpperCase()
       .slice(0, 2);
@@ -55,7 +68,8 @@ if(isError){
         <Alert className="border-amber-500 bg-amber-50 text-amber-800">
           <Gift className="h-4 w-4" />
           <AlertDescription className="font-medium">
-            🎉 Complete your profile and get €10 bonus reward! Fill in your username and email to claim.
+            🎉 Complete your profile and get €10 bonus reward! Fill in your
+            username and email to claim.
           </AlertDescription>
         </Alert>
 
@@ -72,9 +86,7 @@ if(isError){
               <User className="w-5 h-5" />
               Profile Avatar
             </CardTitle>
-            <CardDescription>
-              Your profile picture preview
-            </CardDescription>
+            <CardDescription>Your profile picture preview</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center space-y-4">
             <Avatar className="w-24 h-24">
@@ -88,7 +100,7 @@ if(isError){
               </h3>
               <p className="text-gray-600 text-sm flex items-center justify-center gap-1">
                 <Mail className="w-3 h-3" />
-                {user?.user.email|| ''}
+                {user?.user.email || ''}
               </p>
             </div>
           </CardContent>
@@ -101,9 +113,7 @@ if(isError){
               <User className="w-5 h-5" />
               Personal Information
             </CardTitle>
-            <CardDescription>
-              Enter your basic profile details
-            </CardDescription>
+            <CardDescription>Enter your basic profile details</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -129,14 +139,14 @@ if(isError){
             <Alert className="border-blue-200 bg-blue-50 text-blue-800">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription className="text-sm">
-                Profile editing can only be done in Account Settings after initial setup.
+                Profile editing can only be done in Account Settings after
+                initial setup.
               </AlertDescription>
             </Alert>
           </CardContent>
         </Card>
 
         <div className="grid md:grid-cols-1 gap-6">
-
           {/* Referral Link Card */}
           <Card className="border-gray-200">
             <CardHeader>
@@ -144,9 +154,7 @@ if(isError){
                 <Link className="w-5 h-5" />
                 Referral Link
               </CardTitle>
-              <CardDescription>
-                Share this link to earn rewards
-              </CardDescription>
+              <CardDescription>Share this link to earn rewards</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">

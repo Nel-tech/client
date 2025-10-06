@@ -8,7 +8,7 @@ function Discover() {
       <main className="flex-1 flex flex-col">
         {/* Header */}
         <header>
-          <DashboardHeader/>
+          <DashboardHeader />
         </header>
 
         {/* Scrollable Content */}

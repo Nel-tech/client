@@ -1,26 +1,26 @@
 // app/artist/[artistId]/page.tsx
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
 const artist = {
   id: 1,
-  name: "Luso",
-  genre: "Electronic",
-  bio: "Luso is a boundary-pushing electronic artist redefining the soundscape with deep beats and soulful vibes. Known for his unique sonic identity, he blends traditional rhythms with futuristic tones.",
-  image: "/images/artist-banner.jpg",
-  profile: "/images/artist-profile.jpg",
+  name: 'Luso',
+  genre: 'Electronic',
+  bio: 'Luso is a boundary-pushing electronic artist redefining the soundscape with deep beats and soulful vibes. Known for his unique sonic identity, he blends traditional rhythms with futuristic tones.',
+  image: '/images/artist-banner.jpg',
+  profile: '/images/artist-profile.jpg',
   topTracks: [
-    { id: 1, title: "Euphoria", thumbnail: "/images/track1.jpg" },
-    { id: 2, title: "Night Drive", thumbnail: "/images/track2.jpg" },
-    { id: 3, title: "Solitude", thumbnail: "/images/track3.jpg" },
-    { id: 4, title: "Echoes", thumbnail: "/images/track4.jpg" },
-    { id: 5, title: "Spectrum", thumbnail: "/images/track5.jpg" },
+    { id: 1, title: 'Euphoria', thumbnail: '/images/track1.jpg' },
+    { id: 2, title: 'Night Drive', thumbnail: '/images/track2.jpg' },
+    { id: 3, title: 'Solitude', thumbnail: '/images/track3.jpg' },
+    { id: 4, title: 'Echoes', thumbnail: '/images/track4.jpg' },
+    { id: 5, title: 'Spectrum', thumbnail: '/images/track5.jpg' },
   ],
   allMusic: [
-    { id: 6, title: "Horizon", thumbnail: "/images/track6.jpg" },
-    { id: 7, title: "Lost", thumbnail: "/images/track7.jpg" },
-    { id: 8, title: "Nebula", thumbnail: "/images/track8.jpg" },
+    { id: 6, title: 'Horizon', thumbnail: '/images/track6.jpg' },
+    { id: 7, title: 'Lost', thumbnail: '/images/track7.jpg' },
+    { id: 8, title: 'Nebula', thumbnail: '/images/track8.jpg' },
   ],
 };
 

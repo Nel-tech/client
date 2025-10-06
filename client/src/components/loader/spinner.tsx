@@ -1,5 +1,4 @@
-
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 export default function Spinner() {
   return (
@@ -7,7 +6,7 @@ export default function Spinner() {
       <motion.div
         className="w-16 h-16 border-4 border-t-transparent border-orange-500 rounded-full"
         animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
       />
     </div>
   );

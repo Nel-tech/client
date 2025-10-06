@@ -1,4 +1,5 @@
-'use client'
+'use client';
+import { useEffect } from 'react';
 import { TropiqkLogo } from '@/components/Logo';
 import { motion } from 'framer-motion';
 import { logoVariants } from '@/components/Variants';
@@ -12,41 +13,51 @@ import { LoginSchema, TLoginSchema } from '@/lib/validators/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import {  useRouter } from 'next/navigation';
-
-const Signup = () => {
- 
-    const router = useRouter();
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/useAuthStore';
+const Login = () => {
+  const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+  const initialized = useAuthStore((state) => state.initialized);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<TLoginSchema>({
     resolver: zodResolver(LoginSchema),
-   
   });
 
-  const { mutate: registerUser, isPending } = useLogin({
-    onSuccess: (user) => {
-      toast.success(
-        `Welcome, Back ${user?.username}!`,
-        { duration: 1000 }
-      );
-
-      if (user?.role === 'Artist') {
-        router.push('/onboarding');
-      } else {
-        router.push('/fans/dashboard');
+  const {
+    mutate: loginUser,
+    isPending,
+    isSuccess,
+  } = useLogin({
+    onSuccess: () => {
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser) {
+        toast.success(
+          `Welcome, ${currentUser.username}! Your account has been created.`
+        );
       }
     },
   });
+
+  useEffect(() => {
+    if (isSuccess && user && initialized) {
+      if (user.role === 'Artist') {
+        router.push('/artist/dashboard');
+      } else {
+        router.push('/fans/dashboard');
+      }
+    }
+  }, [isSuccess, user, initialized, router]);
 
   const onSubmit = (formData: TLoginSchema) => {
     const completeFormData = {
       ...formData,
     };
 
-    registerUser(completeFormData);
+    loginUser(completeFormData);
   };
   return (
     <>
@@ -72,77 +83,86 @@ const Signup = () => {
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-           
-
             {/* --- EMAIL --- */}
             <div>
-              <label htmlFor="email" className="block font-poppins mb-1 text-sm text-gray-300">
+              <label
+                htmlFor="email"
+                className="block font-poppins mb-1 text-sm text-gray-300"
+              >
                 Email address
               </label>
               <Input
                 id="email"
                 type="email"
-                {...register("email")}
+                {...register('email')}
                 className="border border-gray-600 font-poppins bg-transparent text-white placeholder-gray-400 focus:border-blue-500 focus:ring-0"
                 disabled={isPending}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm font-poppins">{errors.email.message}</p>
+                <p className="text-red-500 text-sm font-poppins">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
             {/* --- PASSWORD --- */}
             <div>
-              <label htmlFor="password" className="block font-poppins mb-1 text-sm text-gray-300">
+              <label
+                htmlFor="password"
+                className="block font-poppins mb-1 text-sm text-gray-300"
+              >
                 Password
               </label>
               <Input
                 id="password"
                 type="password"
-                {...register("password")}
+                {...register('password')}
                 className="border font-poppins border-gray-600 bg-transparent text-white placeholder-gray-400 focus:border-blue-500 focus:ring-0"
                 disabled={isPending}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm font-poppins">{errors.password.message}</p>
+                <p className="text-red-500 text-sm font-poppins">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
             {/* --- REMEMBER ME --- */}
-    <div className="flex items-center justify-between">
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          {...register("rememberMe")}
-          className="h-4 w-4 text-blue-500 border-gray-600 rounded focus:ring-blue-500"
-        />
-        <span className="text-sm text-gray-300 font-poppins">Remember me</span>
-      </label>
-    </div>
+            <div className="flex items-center justify-between">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register('rememberMe')}
+                  className="h-4 w-4 text-blue-500 border-gray-600 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-300 font-poppins">
+                  Remember me
+                </span>
+              </label>
+            </div>
 
             <div>
-              <Button 
-                type="submit" 
-                disabled={isPending} 
+              <Button
+                type="submit"
+                disabled={isPending}
                 className="cursor-pointer font-poppins w-full sm:w-auto bg-[#FF6B35] text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl active:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isPending ? "Logging In..." : "Login"}
+                {isPending ? 'Logging In...' : 'Login'}
               </Button>
             </div>
           </form>
 
           {/* <GoogleButton text="Sign up with Google" /> */}
 
-         <p className="mt-6 text-center font-poppins text-sm text-gray-500 dark:text-gray-400">
-  Don’t have an account?{" "}
-  <Link
-    href="/auth/signup"
-    className="font-semibold text-[#FF6B35]"
-  >
-    Create one
-  </Link>
-</p>
-
+          <p className="mt-6 text-center font-poppins text-sm text-gray-500 dark:text-gray-400">
+            Don’t have an account?{' '}
+            <Link
+              href="/auth/register"
+              className="font-semibold text-[#ff6b35]"
+            >
+              Create one
+            </Link>
+          </p>
         </div>
       </div>
 
@@ -153,4 +173,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;

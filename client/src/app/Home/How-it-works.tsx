@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Tab from '@/components/Tab';
 import { artistSteps, fanSteps } from '@/helper/mock';
-import { RolesTypes } from '@/helper/helper';
+import { RolesTypes } from '@/helper/type';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import {
