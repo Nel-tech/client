@@ -24,7 +24,7 @@ import {
 
 import { ProfileSkeleton } from '@/components/loader/profile/ProfileSkeleton';
 import { ProfileError } from '@/components/loader/profile/ProfileError';
-import { getCurrentUser } from '@/lib/api';
+import { getCurrentUser } from '@/lib/api/endpoints';
 export default function UserProfileInterface() {
   const [copied, setCopied] = useState(false);
 

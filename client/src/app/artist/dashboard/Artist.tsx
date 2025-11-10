@@ -1,31 +1,26 @@
 'use client';
-
 import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import MobileHeader from './components/MobileHeader';
 import OverviewTab from './components/OverviewTab';
 import TrackTab from './Tabs/TrackTab';
-import {
-  tracks,
-  stats,
-  profileTasks,
-  sidebarItems,
-  topFans,
-} from '@/helper/mock';
+import { stats, sidebarItems } from '@/helper/mock';
 import ProfileTab from './Tabs/ProfileTab';
 import FanTab from './Tabs/FanTab';
-// import other tabs...
+import UploadTrack from './Tabs/uploadTrack';
 
 export default function TropiqkArtistDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showUploadForm, setShowUploadForm] = useState(false);
 
-  const completedTasks = profileTasks.filter((task) => task.completed).length;
-  const progressPercentage = Math.round(
-    (completedTasks / profileTasks.length) * 100
-  );
+  const handleAddTrackClick = () => {
+    setShowUploadForm(true);
+  };
 
-  // mock data here (stats, profileTasks, etc.)
+  const handleCancelUpload = () => {
+    setShowUploadForm(false);
+  };
 
   return (
     <div className="min-h-screen">
@@ -41,14 +36,16 @@ export default function TropiqkArtistDashboard() {
         />
 
         <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto">
-          {activeTab === 'overview' && (
-            <OverviewTab
-              stats={stats}
-              profileTasks={profileTasks}
-              progressPercentage={progressPercentage}
-            />
+          {activeTab === 'overview' && <OverviewTab stats={stats} />}
+          
+          {activeTab === 'tracks' && !showUploadForm && (
+            <TrackTab onAddTrackClick={handleAddTrackClick} />
           )}
-          {activeTab === 'tracks' && <TrackTab />}
+          
+          {activeTab === 'tracks' && showUploadForm && (
+            <UploadTrack onCancel={handleCancelUpload} />
+          )}
+          
           {activeTab === 'fans' && <FanTab />}
           {activeTab === 'profile' && <ProfileTab />}
         </main>

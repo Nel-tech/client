@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TabProps } from '@/helper/type';
-import { RolesTypes } from '@/helper/type';
+import { RoleType } from '@/helper/type';
 import clsx from 'clsx';
 
 export default function Tab({ activeTab, setActiveTab }: TabProps) {
@@ -8,7 +8,7 @@ export default function Tab({ activeTab, setActiveTab }: TabProps) {
     <Tabs
       defaultValue="Artist"
       value={activeTab}
-      onValueChange={(val) => setActiveTab(val as RolesTypes)}
+      onValueChange={(val) => setActiveTab(val as RoleType)}
       className="mt-12 flex justify-center items-center mx-auto text-center"
     >
       <TabsList className="relative bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-xl p-1.5 gap-2 shadow-2xl">
@@ -44,7 +44,7 @@ export default function Tab({ activeTab, setActiveTab }: TabProps) {
         </TabsTrigger>
 
         <TabsTrigger
-          value="fan"
+          value="Fan"
           className={clsx(
             'relative cursor-pointer px-8 py-4 text-base font-poppins font-semibold rounded-lg transition-all duration-500 ease-out',
             'overflow-hidden group min-w-[140px]',

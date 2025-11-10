@@ -1,21 +1,34 @@
 // components/ProfileFormFields.tsx
-import { ArtistFormData, UserData, } from '@/helper/type';
-import React from 'react';
+import { ArtistFormData, UserData, BaseUser, ArtistProfile, GetPendingResponse } from '@/helper/type';
+import React, { useState, useEffect, useRef } from 'react';
+import { Mail, AlertCircle } from 'lucide-react';
+import { EmailChangeModal } from './EmailChangeModal';
+import { EmailVerificationModal } from './EmailVerificationModal';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 interface ProfileFormFieldsProps {
   isEditing: boolean;
   userData: UserData;
-  artistFormData:ArtistFormData
+  artistFormData: ArtistFormData;
   onUserInputChange: (field: string, value: string) => void;
   onArtistInputChange: (field: string, value: string) => void;
   onSave: () => void;
-  user: any;
-  artist: any;
-  emailFlow: any;
+  user: BaseUser;
+  artist: ArtistProfile;
+  emailFlow: {
+    pendingVerification:GetPendingResponse
+    hasPendingVerification: boolean;
+    requestChange: (data: { email: string; password: string }) => Promise<void>;
+    verifyChange: (data: { verificationCode: string }) => Promise<void>;
+    resendCode: () => Promise<void>;
+    cancelChange: () => Promise<void>;
+    isRequesting: boolean;
+    isVerifying: boolean;
+    isResending: boolean;
+  };
   isSaving: boolean;
 }
-
-
 
 export const ProfileFormFields = ({
   isEditing,
@@ -29,10 +42,112 @@ export const ProfileFormFields = ({
   emailFlow,
   isSaving,
 }: ProfileFormFieldsProps) => {
+  const [showEmailChangeModal, setShowEmailChangeModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const previousPendingState = useRef(emailFlow.hasPendingVerification);
+  const hasJustRequestedChange = useRef(false);
+  const hasShownExpiredToast = useRef(false);
 
-  console.log("Artist in the Profile form field",artist)
+  useEffect(() => {
+    const pendingChanged = !previousPendingState.current && emailFlow.hasPendingVerification;
+    
+    if (pendingChanged && hasJustRequestedChange.current) {
+      setShowVerificationModal(true);
+      hasJustRequestedChange.current = false;
+    }
+    
+    previousPendingState.current = emailFlow.hasPendingVerification;
+  }, [emailFlow.hasPendingVerification]);
+
+  // Show toast when code expires
+  useEffect(() => {
+    if (
+      emailFlow.hasPendingVerification && 
+      emailFlow.pendingVerification?.pendingEmailChange?.isExpired && 
+      !hasShownExpiredToast.current
+    ) {
+      toast.warning('Verification code expired', {
+        description: 'Please request a new code to continue.',
+      });
+      hasShownExpiredToast.current = true;
+    }
+
+    // Reset the flag when code is no longer expired or no pending verification
+    if (!emailFlow.hasPendingVerification || !emailFlow.pendingVerification?.pendingEmailChange?.isExpired) {
+      hasShownExpiredToast.current = false;
+    }
+  }, [emailFlow.hasPendingVerification, emailFlow.pendingVerification?.pendingEmailChange?.isExpired]);
+
+  const handleRequestEmailChange = async (data: { email: string; password: string }) => {
+    try {
+      hasJustRequestedChange.current = true;
+      await emailFlow.requestChange(data);
+      setShowEmailChangeModal(false);
+      
+      toast.success('Verification code sent!', {
+        description: `Check your inbox at ${data.email}`,
+      });
+      
+    } catch (error) {
+      hasJustRequestedChange.current = false;
+      console.error('Request email change error:', error);
+      toast.error('Failed to send verification code', {
+        description: 'Please try again or contact support.',
+      });
+      throw error;
+    }
+  };
+
+  const handleVerifyCode = async (verificationCode: string) => {
+    try {
+      await emailFlow.verifyChange({ verificationCode });
+      onUserInputChange('email', emailFlow.pendingVerification?.pendingEmailChange?.newEmail || '');
+      setShowVerificationModal(false);
+      
+      toast.success('Email verified successfully!', {
+        description: 'Your email has been updated.',
+      });
+    } catch (error) {
+      console.error('Verify email error:', error);
+      toast.error('Verification failed', {
+        description: 'Invalid code or code expired. Please try again.',
+      });
+      throw error;
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      await emailFlow.resendCode();
+      toast.success('New code sent!', {
+        description: 'Check your inbox for the new verification code.',
+      });
+    } catch (error) {
+      console.error('Resend code error:', error);
+      toast.error('Failed to resend code', {
+        description: 'Please try again.',
+      });
+      throw error;
+    }
+  };
+
+  const handleCancelEmailChange = async () => {
+    try {
+      await emailFlow.cancelChange();
+      onUserInputChange('email', user?.email || '');
+      setShowVerificationModal(false);
+      
+      toast.info('Email change cancelled', {
+        description: 'Your email remains unchanged.',
+      });
+    } catch (error) {
+      console.error('Cancel email change error:', error);
+      toast.error('Failed to cancel email change');
+      throw error;
+    }
+  };
+
   return (
-
     <div className="space-y-6">
       {/* Personal Information Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -50,7 +165,7 @@ export const ProfileFormFields = ({
             />
           ) : (
             <div className="w-full p-3 border border-white/10 rounded-lg bg-white/5 text-white">
-            { user?.username || 'Not set'}
+              {user?.username || 'Not set'}
             </div>
           )}
         </div>
@@ -58,50 +173,46 @@ export const ProfileFormFields = ({
         <div>
           <label className="block text-sm font-medium mb-2 text-white">
             Email
-            {emailFlow.hasPendingVerification && (
-              <span className="ml-2 text-xs text-yellow-400 font-normal">
-                (Pending verification)
-              </span>
-            )}
           </label>
           {isEditing ? (
-            <div className="relative">
-              <input
-                type="email"
-                className={`w-full p-3 border rounded-lg bg-white/5 text-white placeholder:text-gray-400 focus:ring-1 focus:outline-none ${
-                  emailFlow.hasPendingVerification
-                    ? 'border-yellow-500/40 focus:border-yellow-400 focus:ring-yellow-400'
-                    : 'border-white/20 focus:border-[#ff6b35] focus:ring-[#ff6b35]'
-                }`}
-                placeholder="your.email@example.com"
-                value={userData.email}
-                onChange={(e) => onUserInputChange('email', e.target.value)}
-                disabled={!!emailFlow.hasPendingVerification}
-              />
-              {emailFlow.hasPendingVerification && (
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                </div>
+            <div className="space-y-2">
+              <div className="w-full p-3 border border-white/10 rounded-lg bg-white/5 text-white flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-gray-400" />
+                  {emailFlow.pendingVerification?.pendingEmailChange?.newEmail ||
+                    user?.email ||
+                    'Not set'}
+                </span>
+                {emailFlow.hasPendingVerification && (
+                  <span className="text-xs text-[#ff6b35] bg-[#ff6b35]/20 px-2 py-1 rounded flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {emailFlow.pendingVerification?.pendingEmailChange?.isExpired ? 'Expired' : 'Pending'}
+                  </span>
+                )}
+              </div>
+              
+              {emailFlow.hasPendingVerification ? (
+                <Button
+                  onClick={() => setShowVerificationModal(true)}
+                  className="w-full p-3 border border-[#ff6b35]/40 rounded-lg bg-[#ff6b35]/10 text-[#ff6b35] hover:bg-[#ff6b35]/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  {emailFlow.pendingVerification?.pendingEmailChange?.isExpired ? 'Resend Code' : 'Verify Email'}
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setShowEmailChangeModal(true)}
+                  className="w-full p-3 border border-[#ff6b35]/40 rounded-lg bg-[#ff6b35]/10 text-[#ff6b35] hover:bg-[#ff6b35]/20 transition-colors font-medium text-sm"
+                >
+                  Change Email
+                </Button>
               )}
             </div>
           ) : (
-            <div className="w-full p-3 border border-white/10 rounded-lg bg-white/5 text-white flex items-center justify-between">
-              <span>
-                {emailFlow.pendingVerification?.currentEmail ||
-                  user?.email ||
-                  'Not set'}
-              </span>
-              {emailFlow.hasPendingVerification && (
-                <span className="text-xs text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded">
-                  Pending
-                </span>
-              )}
+            <div className="w-full p-3 border border-white/10 rounded-lg bg-white/5 text-white flex items-center gap-2">
+              <Mail className="w-4 h-4 text-gray-400" />
+              {user?.email || 'Not set'}
             </div>
-          )}
-          {emailFlow.hasPendingVerification && (
-            <p className="text-xs text-yellow-200/80 mt-1">
-              New email: {emailFlow.pendingVerification?.newEmail}
-            </p>
           )}
         </div>
       </div>
@@ -123,7 +234,6 @@ export const ProfileFormFields = ({
           ) : (
             <div className="w-full p-3 border border-white/10 rounded-lg bg-white/5 text-white">
               {artist?.fullName || 'Not set'}
-            
             </div>
           )}
         </div>
@@ -137,7 +247,9 @@ export const ProfileFormFields = ({
               className="w-full p-3 border border-white/20 rounded-lg bg-white/5 text-white placeholder:text-gray-400 focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] focus:outline-none"
               placeholder="Your stage name"
               value={artistFormData.stageName}
-              onChange={(e) => onArtistInputChange('stageName', e.target.value)}
+              onChange={(e) =>
+                onArtistInputChange('stageName', e.target.value)
+              }
             />
           ) : (
             <div className="w-full p-3 border border-white/10 rounded-lg bg-white/5 text-white">
@@ -167,7 +279,9 @@ export const ProfileFormFields = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2 text-white">Bio</label>
+        <label className="block text-sm font-medium mb-2 text-white">
+          Bio
+        </label>
         {isEditing ? (
           <textarea
             className="w-full p-3 border border-white/20 rounded-lg bg-white/5 text-white placeholder:text-gray-400 focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] focus:outline-none resize-none"
@@ -183,18 +297,39 @@ export const ProfileFormFields = ({
         )}
       </div>
 
-      {/* Save Button - Only show when editing */}
+      {/* Save Button */}
       {isEditing && (
         <div className="flex justify-end pt-4 border-t border-white/10">
-          <button
+          <Button
             onClick={onSave}
             className="bg-[#ff6b35] text-white px-8 py-3 rounded-lg hover:bg-[#e55a2b] transition-colors font-medium shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isSaving}
           >
             {isSaving ? 'Saving...' : 'Save Changes'}
-          </button>
+          </Button>
         </div>
       )}
+
+      {/* Email Change Modal */}
+      <EmailChangeModal
+        isOpen={showEmailChangeModal}
+        currentEmail={user?.email || ''}
+        onRequestChange={handleRequestEmailChange}
+        onClose={() => setShowEmailChangeModal(false)}
+        isRequesting={emailFlow.isRequesting}
+      />
+
+      {/* Email Verification Modal */}
+      <EmailVerificationModal
+        isOpen={showVerificationModal}
+        newEmail={emailFlow.pendingVerification?.pendingEmailChange?.newEmail || ''}
+        isExpired={emailFlow.pendingVerification?.pendingEmailChange?.isExpired || false}
+        onVerify={handleVerifyCode}
+        onResend={handleResendCode}
+        onCancel={handleCancelEmailChange}
+        isVerifying={emailFlow.isVerifying}
+        isResending={emailFlow.isResending}
+      />
     </div>
   );
 };

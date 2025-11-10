@@ -44,7 +44,7 @@ function ProfileProgressCard({
             <CheckCircle
               className={cn(
                 'h-4 w-4',
-                task.completed ? 'text-green-500' : 'text-gray-300'
+                task.completed ? 'text-[#FF6B35]' : 'text-gray-300'
               )}
             />
             <span className={task.completed ? 'line-through text-white' : 'text-gray-400'}>

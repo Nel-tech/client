@@ -1,21 +1,16 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useState } from 'react';
+import { handleApiError } from '../lib/api/handleApiError';
+import { 
+  QueryClient, 
+  QueryClientProvider,
+  QueryCache,
+  MutationCache 
+} from '@tanstack/react-query';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
-  const { initializeAuth, initialized, loading, user } = useAuthStore();
-
-  useEffect(() => {
-    if (!initialized && !loading) {
-      initializeAuth();
-    }
-  }, [user, initializeAuth, initialized, loading]);
-
-  useEffect(() => {}, [initialized, loading, user]);
-
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -25,7 +20,17 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
             refetchOnWindowFocus: false,
             staleTime: 1000 * 60 * 5,
           },
+          mutations: {
+            retry: false,
+          },
         },
+        // ✅ Use QueryCache for global error handling
+        queryCache: new QueryCache({
+          onError: (error) => handleApiError(error),
+        }),
+        mutationCache: new MutationCache({
+          onError: (error) => handleApiError(error),
+        }),
       })
   );
 

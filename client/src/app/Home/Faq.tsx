@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/accordion';
 import Tab from '@/components/Tab';
 import { FAQ } from '@/helper/mock';
-import { RolesTypes } from '@/helper/type';
+import { RoleType } from '@/helper/type';
 
 export function FAQSection() {
-  const [activeCategory, setActiveCategory] = useState<RolesTypes>('Artist');
+  const [activeCategory, setActiveCategory] = useState<RoleType>('Artist');
 
   const filteredFaqs = FAQ.filter((item) => item.category === activeCategory);
 

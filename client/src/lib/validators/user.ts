@@ -7,8 +7,16 @@ export const UpdateUserSchema = z.object({
 });
 
 export const RequestEmailChangeSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  email: z
+    .string({
+      message: 'Email is required',
+    })
+    .email('Please enter a valid email address'),
+  password: z.string({
+    message: 'Password is required',
+  }),
 });
+
 
 export const VerifyEmailChangeSchema = z.object({
   verificationCode: z.string().length(6, 'Verification code must be 6 digits'),

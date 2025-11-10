@@ -29,7 +29,7 @@ export default function EmailVerification() {
       await resendMutation.mutateAsync({ email });
       toast.success('Verification code resent!');
       setCooldown(60);
-    } catch (error: any) {
+    } catch (error: string) {
       toast.error(error.response?.data?.error || 'Failed to resend code');
     }
   };
@@ -46,7 +46,7 @@ export default function EmailVerification() {
       await VerifyEmail.mutateAsync({ email, code });
       toast.success('Email verified successfully!');
       router.push('/artist/onboarding');
-    } catch (error: any) {
+    } catch (error: string) {
       const errorMsg = error.response?.data?.error || error.message;
      if (errorMsg?.includes('expired')) {
       toast.error('Code expired. Request a new one below.');

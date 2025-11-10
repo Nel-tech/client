@@ -1,6 +1,6 @@
 import React from 'react';
 import { toast } from 'sonner';
-import { useUserUpdate, useEmailChangeFlow } from '../queries/user-queries';
+import { useUpdateusername, useEmailChangeFlow } from '../queries/user-queries';
 import {
   useUpdateArtistProfile,
   useProfilePictureUpload,
@@ -12,20 +12,17 @@ import {
   UserData,
 } from '@/helper/type';
 
-
 interface ProfileHandlersConfig {
   setIsEditing: (editing: boolean) => void;
   refetch: () => void;
 }
 
-
-
 interface ProfileHandlersParams {
   userData: UserData;
   artistFormData: ArtistFormData;
   user: BaseUser | null;
-  artist: ArtistProfile | null; 
-  updateUser: ReturnType<typeof useUserUpdate>;
+  artist: ArtistProfile | null;
+  updateUsername: ReturnType<typeof useUpdateusername>;
   updateArtist: ReturnType<typeof useUpdateArtistProfile>;
   uploadProfilePic: ReturnType<typeof useProfilePictureUpload>;
   emailFlow: ReturnType<typeof useEmailChangeFlow>;
@@ -39,12 +36,11 @@ interface ProfileHandlersParams {
 }
 
 // Hook for managing mutations
-export const useProfileHandlers = ({
-  refetch,
-}: ProfileHandlersConfig) => {
-  const updateUser = useUserUpdate({
+export const useProfileHandlers = ({ refetch }: ProfileHandlersConfig) => {
+  const updateUsername = useUpdateusername({
     onSuccess: () => {
       toast.success('Profile updated successfully!');
+      refetch(); // ✅ Added refetch
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update profile');
@@ -54,6 +50,7 @@ export const useProfileHandlers = ({
   const updateArtist = useUpdateArtistProfile({
     onSuccess: () => {
       toast.success('Artist profile updated successfully!');
+      refetch(); // ✅ Added refetch
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update artist profile');
@@ -73,11 +70,11 @@ export const useProfileHandlers = ({
   const emailFlow = useEmailChangeFlow();
 
   // Computed states
-  const isSaving = updateUser.isPending || updateArtist.isPending;
+  const isSaving = updateUsername.isPending || updateArtist.isPending;
   const isUploadingImage = uploadProfilePic.isPending;
 
   return {
-    updateUser,
+    updateUsername,
     updateArtist,
     uploadProfilePic,
     emailFlow,
@@ -94,7 +91,7 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
     artistFormData,
     updateArtist,
     artist,
-    updateUser,
+    updateUsername,
     uploadProfilePic,
     emailFlow,
     verificationCode,
@@ -119,7 +116,6 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      // 5MB limit
       toast.error('Image size must be less than 5MB');
       return;
     }
@@ -154,8 +150,6 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
   };
 
   const handleSaveChanges = async () => {
-   
-
     try {
       const promises: Promise<any>[] = [];
 
@@ -164,42 +158,38 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
         toast.error('Username is required');
         return;
       }
+
+      // Check username change
       if (userData.username !== user?.username && userData.username.trim()) {
         promises.push(
-          updateUser.mutateAsync({ username: userData.username.trim() })
+          updateUsername.mutateAsync({ username: userData.username.trim() })
         );
-      } else {
-        console.log('❌ No username change detected');
       }
 
-      const hasArtistChanges = 
-      artistFormData.fullName !== artist?.fullName ||
-      artistFormData.stageName !== artist?.stageName ||
-      artistFormData.genre !== artist?.genre ||
-      artistFormData.bio !== artist?.bio;
+      // Check artist changes
+      const hasArtistChanges =
+        artistFormData.fullName !== artist?.fullName ||
+        artistFormData.stageName !== artist?.stageName ||
+        artistFormData.genre !== artist?.genre ||
+        artistFormData.bio !== artist?.bio;
 
-  if (hasArtistChanges) {
-    promises.push(
-      updateArtist.mutateAsync(artistFormData) 
-    );
-  }
+      if (hasArtistChanges) {
+        promises.push(updateArtist.mutateAsync(artistFormData));
+      }
 
       if (promises.length > 0) {
         await Promise.all(promises);
+        setIsEditing(false); // ✅ Exit edit mode after successful save
       } else {
         toast.info('No changes to save');
-        setIsEditing(false);
-        return;
-      }
-
-      // Exit edit mode if no email change was requested
-      if (userData.email === user?.email) {
         setIsEditing(false);
       }
     } catch (error) {
       console.error('Save changes error:', error);
+      // ✅ Don't exit edit mode on error
     }
   };
+
   const handleVerifyEmail = async () => {
     // Validate verification code format
     if (verificationCode.length !== 6) {
@@ -220,19 +210,19 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
       setIsEditing(false);
       toast.success('Email verified successfully!');
     } catch (error) {
-      // Error handled by mutation's onError
       console.error('Email verification error:', error);
+      // ✅ Error already handled by mutation's onError
     }
   };
 
   const handleResendCode = async () => {
     try {
       await emailFlow.resendCode();
-      setResendCooldown(60); // 60 second cooldown
+      setResendCooldown(60);
       toast.success('Verification code resent!');
     } catch (error) {
-      // Error handled by mutation's onError
       console.error('Resend code error:', error);
+      // ✅ Error already handled by mutation's onError
     }
   };
 
@@ -245,8 +235,8 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
       }));
       toast.success('Email change cancelled');
     } catch (error) {
-      // Error handled by mutation's onError
       console.error('Cancel email change error:', error);
+      // ✅ Error already handled by mutation's onError
     }
   };
 

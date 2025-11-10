@@ -1,11 +1,8 @@
 'use client';
-import { useEffect } from 'react';
 import { TropiqkLogo } from '@/components/Logo';
 import { motion } from 'framer-motion';
 import { logoVariants } from '@/components/Variants';
 import Link from 'next/link';
-import GoogleButton from '@/components/GoogleButtons';
-import BaseFooter from '@/components/BaseFooter';
 import { useLogin } from '@/lib/queries/auth-queries';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,11 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/store/useAuthStore';
+
 const Login = () => {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const initialized = useAuthStore((state) => state.initialized);
+
   const {
     register,
     handleSubmit,
@@ -27,45 +23,31 @@ const Login = () => {
     resolver: zodResolver(LoginSchema),
   });
 
-  const {
-    mutate: loginUser,
-    isPending,
-    isSuccess,
-  } = useLogin({
-    onSuccess: () => {
-      const currentUser = useAuthStore.getState().user;
-      if (currentUser) {
-        toast.success(
-          `Welcome, ${currentUser.username}! Your account has been created.`
-        );
+  const { mutate: loginUser, isPending } = useLogin({
+    onSuccess: (data) => {
+      toast.success(`Welcome back, ${data.username}!`);
+      
+      // ✅ Simple redirect - let ProtectedRoute handle the rest
+      if (data.role === 'Artist') {
+        router.push('/artist/dashboard');
+      } else if (data.role === 'Fan') {
+        router.push('/fans/dashboard');
+      } else {
+        router.push('/');
       }
     },
   });
 
-  useEffect(() => {
-    if (isSuccess && user && initialized) {
-      if (user.role === 'Artist') {
-        router.push('/artist/dashboard');
-      } else {
-        router.push('/fans/dashboard');
-      }
-    }
-  }, [isSuccess, user, initialized, router]);
-
   const onSubmit = (formData: TLoginSchema) => {
-    const completeFormData = {
-      ...formData,
-    };
-
-    loginUser(completeFormData);
+    loginUser(formData);
   };
+
   return (
     <>
       <nav
         aria-label="Global"
         className="container mx-auto flex items-center justify-between p-6 lg:px-8"
       >
-        {/* Logo */}
         <motion.div className="flex lg:flex-1" variants={logoVariants}>
           <Link href="/" className="-m-1.5 p-1.5">
             <motion.div whileHover="hover" variants={logoVariants}>
@@ -81,6 +63,7 @@ const Login = () => {
             Login to your Account
           </h1>
         </div>
+
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* --- EMAIL --- */}
@@ -133,7 +116,7 @@ const Login = () => {
                 <input
                   type="checkbox"
                   {...register('rememberMe')}
-                  className="h-4 w-4 text-blue-500 border-gray-600 rounded focus:ring-blue-500"
+                  className="h-4 w-4 text-[#FF6B35] border-gray-600 rounded focus:ring-[#FF6B35]"
                 />
                 <span className="text-sm text-gray-300 font-poppins">
                   Remember me
@@ -152,12 +135,10 @@ const Login = () => {
             </div>
           </form>
 
-          {/* <GoogleButton text="Sign up with Google" /> */}
-
           <p className="mt-6 text-center font-poppins text-sm text-gray-500 dark:text-gray-400">
-            Don’t have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link
-              href="/auth/register"
+              href="/auth/signup-options"
               className="font-semibold text-[#ff6b35]"
             >
               Create one
@@ -165,10 +146,6 @@ const Login = () => {
           </p>
         </div>
       </div>
-
-      <footer>
-        <BaseFooter />
-      </footer>
     </>
   );
 };

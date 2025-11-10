@@ -118,19 +118,19 @@ export function Nav() {
             </Link>
           </motion.div>
 
-          {/* <motion.div
+           <motion.div
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
           >
-            <Link href='/auth/register?role=Fan'>
+            <Link href='/auth/signup-options'>
               <Button
                 className="cursor-pointer font-poppins bg-[#FF6B35] text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-[#FF6B35]/40 transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl hover:shadow-[#FF6B35]/50"
               >
                 Sign Up
               </Button>
             </Link>
-          </motion.div> */}
+          </motion.div> 
         </motion.div>
       </nav>
 
@@ -205,7 +205,7 @@ export function Nav() {
                         whileTap={{ scale: 0.98 }}
                       >
                         <Link
-                          href="/login"
+                          href="/auth/login"
                           onClick={() => setMobileMenuOpen(false)}
                           className="font-poppins cursor-pointer border-2 border-neutral-700 text-neutral-300 font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 ease-in-out hover:bg-neutral-800 hover:text-white hover:border-neutral-600 block text-center"
                         >
@@ -220,7 +220,7 @@ export function Nav() {
                         whileTap={{ scale: 0.98 }}
                       >
                         <Link
-                          href="/register"
+                          href="/auth/register"
                           onClick={() => setMobileMenuOpen(false)}
                           className="cursor-pointer font-poppins bg-[#FF6B35] text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-[#FF6B35]/40 transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl hover:shadow-[#FF6B35]/50 block text-center"
                         >

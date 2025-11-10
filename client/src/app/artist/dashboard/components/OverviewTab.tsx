@@ -1,29 +1,36 @@
 'use client';
 import StatCard from './StatCard';
 import { useProfileCompletionStatus } from '@/lib/queries/artist-queries';
-import {  OverviewTabProps } from '@/helper/type';
+import { OverviewTabProps } from '@/helper/type';
 import { TrendingUp, Heart, Star } from 'lucide-react';
 import Spinner from '@/components/loader/spinner';
 import ProfileProgressCard from './ProfileProgressCard';
 
-export default function OverviewTab({
-  stats,
-}: OverviewTabProps) {
+export default function OverviewTab({ stats }: OverviewTabProps) {
   const { data: completionData, isLoading } = useProfileCompletionStatus();
-
-  const profileTasks = completionData?.profileCompletion?.missingFields?.map(
-    (field: string) => ({
-      id: field,
-      task: `Complete ${field}`,
-      completed: false,
-    })
-  ) || [];
-
-  const progressPercentage = completionData?.profileCompletion?.percentage || 0;
+  const completedFields = completionData?.data?.profileCompletion?.completedFields || [];
+  const missingFields = completionData?.data?.profileCompletion?.missingFields || [];
   
+  const allFields = [...completedFields, ...missingFields];
 
-   if (isLoading) {
-    return <div><Spinner/></div>;
+
+
+  const completedFieldsSet = new Set(completedFields);
+
+  const profileTasks = allFields.map((field: string) => ({
+    id: field,
+    task: `Complete ${field}`,
+    completed: completedFieldsSet.has(field),
+  }));
+
+  const progressPercentage = completionData?.data?.profileCompletion?.completionPercentage || 0;
+
+  if (isLoading) {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
   }
 
   return (
@@ -43,13 +50,13 @@ export default function OverviewTab({
         ))}
       </div>
 
- <ProfileProgressCard
-  progressPercentage={progressPercentage}
-  profileTasks={profileTasks}
-  message={completionData?.profileCompletion?.message}
-/>
+      <ProfileProgressCard
+        progressPercentage={progressPercentage}
+        profileTasks={profileTasks}
+        message={completionData?.data?.profileCompletion?.message}
+      />
 
-      <div className=" text-white  p-6 ">
+      <div className="text-white p-6">
         <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">

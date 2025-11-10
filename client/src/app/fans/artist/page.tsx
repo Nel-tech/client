@@ -252,7 +252,7 @@ function ArtistContent() {
                 </SelectTrigger>
                 <SelectContent className="bg-white">
                   <SelectItem value="all">All Artists</SelectItem>
-                  <SelectItem value="afrobeats">Afrobeats</SelectItem>
+                  <SelectItem value="afrobeat">Afrobeat</SelectItem>
                   <SelectItem value="r&b">R&B</SelectItem>
                 </SelectContent>
               </Select>

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { logoVariants } from '@/components/Variants';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import BaseFooter from '@/components/BaseFooter';
+// import BaseFooter from '@/components/BaseFooter';
 import { useRegister } from '@/lib/queries/auth-queries';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -159,19 +159,20 @@ const onSubmit = (formData: TRegistrationSchema) => {
 
           <p className="mt-6 text-center font-poppins text-sm text-gray-500 dark:text-gray-400">
             Already have an account?{' '}
-            <Link
-              href="/auth/login"
-              className="font-semibold text-[#FF6B35] hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Sign in
-            </Link>
+           <Link
+  href="/auth/login"
+  className="font-semibold text-[#FF6B35] hover:text-[#FF6B35] dark:text-[#FF6B35] dark:hover:text-[#FF6B35]"
+>
+  Sign in
+</Link>
+
           </p>
         </div>
       </div>
-
+{/* 
       <footer>
         <BaseFooter />
-      </footer>
+      </footer> */}
     </>
   );
 };

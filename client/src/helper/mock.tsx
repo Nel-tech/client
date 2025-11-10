@@ -12,6 +12,57 @@ import {
 } from 'lucide-react';
 
 import { Tracks, Fan } from './type';
+// lib/config/artist-tiers.ts (or constants/tiers.ts)
+
+export enum ArtistTier {
+  BASIC = 'BASIC',
+  PRO = 'PRO',
+  ULTIMATE = 'ULTIMATE',
+}
+
+export const TIER_FEATURES: Record<
+  ArtistTier,
+  {
+    canDelete: boolean;
+    canEditUrl: boolean;
+    maxFileSize: number;
+    maxTracks: number;
+  }
+> = {
+  [ArtistTier.BASIC]: {
+    canDelete: false,
+    canEditUrl: false,
+    maxFileSize: 50,
+    maxTracks: 5,
+  },
+  [ArtistTier.PRO]: {
+    canDelete: true,
+    canEditUrl: true,
+    maxFileSize: 50,
+    maxTracks: 20,
+  },
+  [ArtistTier.ULTIMATE]: {
+    canDelete: true,
+    canEditUrl: true,
+    maxFileSize: 50,
+    maxTracks: -1, // unlimited
+  },
+};
+
+
+export const TIER_LEVELS: Record<ArtistTier, number> = {
+  [ArtistTier.BASIC]: 1,
+  [ArtistTier.PRO]: 2,
+  [ArtistTier.ULTIMATE]: 3,
+};
+
+export const TIER_EDIT_PERMISSIONS = {
+  BASIC: ['title', 'description', 'thumbnail'],
+  PRO: ['title', 'description', 'thumbnail', 'url'],
+  ULTIMATE: ['title', 'description', 'thumbnail', 'url'],
+} as const;
+
+export type EditableTrackField = 'title' | 'description' | 'thumbnail' | 'url';
 export const artistSteps = [
   {
     number: '01',
@@ -209,41 +260,7 @@ export const stats = [
   { value: '89,432', label: 'Streams Boosted' },
 ];
 
-export const tracks: Tracks[] = [
-  {
-    id: '1',
-    title: 'Summer Vibes',
-    platform: 'YouTube',
-    shares: 234,
-    streams: 12500,
-    goal: 500,
-    isActive: true,
-    thumbnail:
-      'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
-  },
-  {
-    id: '2',
-    title: 'Midnight Dreams',
-    platform: 'Audiomack',
-    shares: 156,
-    streams: 8900,
-    goal: 300,
-    isActive: false,
-    thumbnail:
-      'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=100&h=100&fit=crop',
-  },
-  {
-    id: '3',
-    title: 'City Lights',
-    platform: 'SoundCloud',
-    shares: 89,
-    streams: 5600,
-    goal: 200,
-    isActive: false,
-    thumbnail:
-      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop',
-  },
-];
+
 
 export const topFans: Fan[] = [
   {
@@ -295,6 +312,6 @@ export const sidebarItems = [
     icon: <BarChart3 className="h-5 w-5" />,
   },
   { id: 'tracks', label: 'Tracks', icon: <Music className="h-5 w-5" /> },
-  { id: 'fans', label: 'Fans', icon: <Users className="h-5 w-5" /> },
+  // { id: 'fans', label: 'Fans', icon: <Users className="h-5 w-5" /> },
   { id: 'profile', label: 'Profile', icon: <User className="h-5 w-5" /> },
 ];

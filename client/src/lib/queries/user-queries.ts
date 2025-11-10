@@ -7,31 +7,33 @@ import {
 
 import { useAuthStore } from '../../store/useAuthStore';
 import {
-  updateUserProfile,
+  updateUserUsername,
   requestEmailChange,
-  resendVerificationCode,
+  resendVerification,
   verifyEmailChange,
-  cancelEmailChange
-} from '../api';
+  getPendingEmailChange,
+  cancelEmailChange,
+} from '../api/endpoints';
 import {
   UpdateUserResponse,
   EmailChangeResponse,
-  MessageResponse,
+  EmailChangeRequest,
+  VerifyEmailChangeRequest,
+  VerifyEmailChangeResponse,
+  ResendCodeResponse,
+  CancelChangeResponse,
+  GetPendingResponse,
 } from '../../helper/type';
-import {
-  UpdateUserData,
-  RequestEmailChangeData,
-  VerifyEmailChangeData,
-} from '../validators/user';
+import { UpdateUserData, RequestEmailChangeData } from '../validators/user';
 
 // Update User Profile Hook
-export const useUserUpdate = (
+export const useUpdateusername = (
   options?: UseMutationOptions<UpdateUserResponse, Error, UpdateUserData>
 ) => {
   const setUser = useAuthStore((state) => state.setUser);
 
   return useMutation<UpdateUserResponse, Error, UpdateUserData>({
-    mutationFn: updateUserProfile,
+    mutationFn: updateUserUsername,
     retry: false,
     ...options,
     onSuccess: (response, variables, context) => {
@@ -40,23 +42,12 @@ export const useUserUpdate = (
       }
       options?.onSuccess?.(response, variables, context);
     },
-    onError: (error, variables, context) => {
-      const message =
-        error.message || 'Something went wrong during profile update.';
-      console.error('Profile update error:', message);
-      options?.onError?.(error, variables, context);
-    },
   });
 };
 
-
 // Request Email Change Hook
 export const useRequestEmailChange = (
-  options?: UseMutationOptions<
-    EmailChangeResponse,
-    Error,
-    RequestEmailChangeData
-  >
+  options?: UseMutationOptions<EmailChangeResponse, Error, EmailChangeRequest>
 ) => {
   const queryClient = useQueryClient();
 
@@ -64,30 +55,39 @@ export const useRequestEmailChange = (
     mutationFn: requestEmailChange,
     retry: false,
     onSuccess: (response, variables, context) => {
-      // Cache the pending verification state
-      queryClient.setQueryData(
-        ['pending-email-verification'],
-        response.pendingVerification
-      );
+    
+      queryClient.setQueryData(['pending-email-verification'], {
+        pendingEmailChange: response.data, 
+      });
+      
+      queryClient.invalidateQueries({ 
+        queryKey: ['pending-email-verification'] 
+      });
+      
       options?.onSuccess?.(response, variables, context);
     },
-    onError: (error, variables, context) => {
-      const message = error.message || 'Failed to send email verification.';
-      console.error('Email change request error:', message);
-      options?.onError?.(error, variables, context);
-    },
+
+
     ...options,
   });
 };
 
 // Verify Email Change Hook
 export const useVerifyEmailChange = (
-  options?: UseMutationOptions<UpdateUserResponse, Error, VerifyEmailChangeData>
+  options?: UseMutationOptions<
+    VerifyEmailChangeResponse,
+    Error,
+    VerifyEmailChangeRequest
+  >
 ) => {
   const setUser = useAuthStore((state) => state.setUser);
   const queryClient = useQueryClient();
 
-  return useMutation<UpdateUserResponse, Error, VerifyEmailChangeData>({
+  return useMutation<
+    VerifyEmailChangeResponse,
+    Error,
+    VerifyEmailChangeRequest
+  >({
     mutationFn: verifyEmailChange,
     retry: false,
     onSuccess: (response, variables, context) => {
@@ -97,34 +97,31 @@ export const useVerifyEmailChange = (
         // Clear pending verification and update user data
         queryClient.removeQueries({ queryKey: ['pending-email-verification'] });
         queryClient.invalidateQueries({ queryKey: ['user-profile'] });
-        queryClient.invalidateQueries({ queryKey: ['artist-profile'] });
+        queryClient.invalidateQueries({ queryKey: ['user'] });
       }
       options?.onSuccess?.(response, variables, context);
     },
-    onError: (error, variables, context) => {
-      const message = error.message || 'Email verification failed.';
-      console.error('Email verification error:', message);
-      options?.onError?.(error, variables, context);
-    },
+
     ...options,
   });
 };
 
 // Resend Verification Code Hook
 export const useResendVerificationCode = (
-  options?: UseMutationOptions<MessageResponse, Error, void>
+  options?: UseMutationOptions<ResendCodeResponse, Error, void>
 ) => {
-  return useMutation<MessageResponse, Error, void>({
-    mutationFn: resendVerificationCode,
+  const queryClient = useQueryClient();
+
+  return useMutation<ResendCodeResponse, Error, void>({
+    mutationFn: resendVerification,
     retry: false,
     onSuccess: (response, variables, context) => {
-      console.log('Verification code resent successfully');
+      queryClient.invalidateQueries({
+        queryKey: ['pending-email-verification'],
+      });
+
+      console.log('Verification code resent successfully:', response.message);
       options?.onSuccess?.(response, variables, context);
-    },
-    onError: (error, variables, context) => {
-      const message = error.message || 'Failed to resend verification code.';
-      console.error('Resend verification error:', message);
-      options?.onError?.(error, variables, context);
     },
     ...options,
   });
@@ -132,34 +129,29 @@ export const useResendVerificationCode = (
 
 // Cancel Email Change Hook
 export const useCancelEmailChange = (
-  options?: UseMutationOptions<MessageResponse, Error, void>
+  options?: UseMutationOptions<CancelChangeResponse, Error, void>
 ) => {
   const queryClient = useQueryClient();
 
-  return useMutation<MessageResponse, Error, void>({
+  return useMutation<CancelChangeResponse, Error, void>({
     mutationFn: cancelEmailChange,
     retry: false,
     onSuccess: (response, variables, context) => {
-      // Clear pending verification from cache
       queryClient.removeQueries({ queryKey: ['pending-email-verification'] });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
       options?.onSuccess?.(response, variables, context);
-    },
-    onError: (error, variables, context) => {
-      const message = error.message || 'Failed to cancel email change.';
-      console.error('Cancel email change error:', message);
-      options?.onError?.(error, variables, context);
     },
     ...options,
   });
 };
 
 // Query Hook for Pending Email Verification Status
-export const usePendingEmailVerification = () => {
-  return useQuery({
+export const useGetPendingEmailChange = () => {
+  return useQuery<GetPendingResponse>({
     queryKey: ['pending-email-verification'],
-    queryFn: () => null, // This is managed by the mutations above
-    enabled: false, // Only updated by mutations, never fetched
-    staleTime: Infinity, // Don't refetch automatically
+    queryFn: getPendingEmailChange,
+    staleTime: 30000,
+    retry: false,
   });
 };
 
@@ -169,7 +161,7 @@ export const useEmailChangeFlow = () => {
   const verifyEmailChange = useVerifyEmailChange();
   const resendCode = useResendVerificationCode();
   const cancelChange = useCancelEmailChange();
-  const { data: pendingVerification } = usePendingEmailVerification();
+  const { data: pendingData } = useGetPendingEmailChange(); 
 
   return {
     // Actions
@@ -180,24 +172,20 @@ export const useEmailChangeFlow = () => {
 
     // States
     isPendingRequest: requestEmailChange.isPending,
-    isPendingVerification: verifyEmailChange.isPending,
-    isPendingResend: resendCode.isPending,
     isPendingCancel: cancelChange.isPending,
+    isVerifying: verifyEmailChange.isPending, 
+    isResending: resendCode.isPending, 
 
-    // Data
-    pendingVerification,
-    hasPendingVerification: !!pendingVerification,
+   
+    pendingVerification: pendingData?.pendingEmailChange ?? null,
+    hasPendingVerification: !!pendingData?.pendingEmailChange, 
 
     // Errors
     requestError: requestEmailChange.error,
-    verifyError: verifyEmailChange.error,
-    resendError: resendCode.error,
     cancelError: cancelChange.error,
 
     // Reset functions
     resetRequestError: requestEmailChange.reset,
-    resetVerifyError: verifyEmailChange.reset,
-    resetResendError: resendCode.reset,
     resetCancelError: cancelChange.reset,
   };
 };

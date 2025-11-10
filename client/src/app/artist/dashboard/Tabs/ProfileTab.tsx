@@ -9,7 +9,7 @@ useArtistProfile,
 
 import { useAuthUser } from '@/store/useAuthStore';
 import { ProfileHeader } from '../components/ProfileHeader';
-import { EmailVerificationBanner } from '../components/EmailVerificationBanner';
+// import { EmailVerificationBanner } from '../components/EmailVerificationModal';
 import { ProfileContent } from '../components/ProfileContent';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorDisplay } from '../components/ErrorDisplay';
@@ -21,7 +21,6 @@ import {
 
 function ProfileTab() {
   const artistProfile = useArtistProfile();
-  console.log("artistpROFILE", artistProfile)
   const user = useAuthUser();
   const loading = useProfileLoading();
   const error = useProfileError();
@@ -60,7 +59,7 @@ const clearError = useClearError();
   };
 
   const {
-    updateUser,
+    updateUsername,
     updateArtist,
     uploadProfilePic,
     emailFlow,
@@ -75,15 +74,15 @@ const clearError = useClearError();
     handleImageUpload,
     handleEditToggle,
     handleSaveChanges,
-    handleVerifyEmail,
-    handleResendCode,
-    handleCancelEmailChange,
+    // handleVerifyEmail,
+    // handleResendCode,
+    // handleCancelEmailChange,
   } = createProfileHandlers({
     userData,
     artistFormData, 
     user,
     artist: artistProfile,
-    updateUser,
+    updateUsername,
     updateArtist,
     uploadProfilePic,
     emailFlow,
@@ -119,7 +118,7 @@ const clearError = useClearError();
         disabled={isSaving}
       />
 
-      {emailFlow.hasPendingVerification && (
+      {/* {emailFlow.hasPendingVerification && (
         <EmailVerificationBanner
           pendingVerification={emailFlow.pendingVerification}
           verificationCode={verificationCode}
@@ -128,10 +127,10 @@ const clearError = useClearError();
           onResend={handleResendCode}
           onCancel={handleCancelEmailChange}
           resendCooldown={resendCooldown}
-          isVerifying={emailFlow.isPendingVerification}
-          isResending={emailFlow.isPendingResend}
+          isVerifying={emailFlow.hasPendingVerification}
+          isResending={emailFlow.isPendingRequest}
         />
-      )}
+      )} */}
 
       <ProfileContent
         isEditing={isEditing}

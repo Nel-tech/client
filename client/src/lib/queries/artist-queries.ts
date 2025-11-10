@@ -4,15 +4,15 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useAuthStore } from '../../store/useAuthStore';
+import useProfileStore from '@/store/useProfileStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import {
   getProfileCompletionStatus,
   ArtistOnboarding,
   uploadProfileImage,
   updateArtistProfile,
-} from '../api';
+} from '../api/endpoints';
 import { TOnboardingSchema } from '../validators/auth';
-import { toast } from 'sonner';
 import {
   OnboardingResponse,
   ProfilePictureResponse,
@@ -20,41 +20,43 @@ import {
   UpdateArtistRequest,
 } from '@/helper/type';
 import { useUpdateArtistProfile as useUpdateArtistProfileStore } from '@/store/useProfileStore';
-
-const setCookie = (name: string, value: string, days: number = 30) => {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Strict`;
-};
-
-const setUserRoleCookie = (role: string) => {
-  setCookie('userRole', role, 30);
-};
-
 export const useArtistOnboarding = (
   options?: UseMutationOptions<OnboardingResponse, Error, TOnboardingSchema>
 ) => {
-  const setUser = useAuthStore((state) => state.setUser);
+  const setProfile = useProfileStore((state) => state.setArtistProfile);
+  const setUser = useAuthStore((state) => state.setUser); // ✅ ADD
+  const currentUser = useAuthStore((state) => state.user); // ✅ ADD
 
   return useMutation<OnboardingResponse, Error, TOnboardingSchema>({
     mutationFn: ArtistOnboarding,
     retry: false,
     onSuccess: (response, variables, context) => {
-      if (response.role) {
-        setUserRoleCookie(response.role);
+      // Update ProfileStore
+      const updatedArtist = {
+        ...response.artist,
+        hasOnboarded: true,
+      };
+      setProfile(updatedArtist);
+
+      // ✅ CRITICAL: Also update AuthStore
+      if (currentUser) {
+        setUser({
+          ...currentUser,
+          hasOnboarded: true, 
+        });
       }
-      setUser(response.artist);
+
+      console.log('✅ Both stores updated:', {
+        profileStore: updatedArtist,
+        authStore: useAuthStore.getState().user,
+      });
+
       options?.onSuccess?.(response, variables, context);
-    },
-    onError: (error, variables, context) => {
-      const message =
-        error.message || 'Something went wrong during onboarding.';
-      toast.error(message, { duration: 5000 });
-      options?.onError?.(error, variables, context);
     },
     ...options,
   });
 };
+
 
 export const useProfilePictureUpload = (
   options?: UseMutationOptions<
@@ -86,18 +88,9 @@ export const useProfilePictureUpload = (
         }
         return oldData;
       });
-
-      // Call custom onSuccess if provided
       options?.onSuccess?.(response, variables, context);
     },
-    onError: (error, variables, context) => {
-      const message =
-        error.message || 'Failed to update profile picture. Please try again.';
-      toast.error(message, { duration: 5000 });
-
-      // Call custom onError if provided
-      options?.onError?.(error, variables, context);
-    },
+ 
     ...options,
   });
 };
@@ -106,7 +99,7 @@ export const useProfileCompletionStatus = () => {
   return useQuery({
     queryKey: ['profileCompletionStatus'],
     queryFn: getProfileCompletionStatus,
-    staleTime: 2 * 60 * 1000, 
+    staleTime: 2 * 60 * 1000,
     retry: 1,
   });
 };
@@ -121,9 +114,6 @@ export const useUpdateArtistProfile = (
     mutationFn: updateArtistProfile,
     retry: false,
     onSuccess: (response, variables, context) => {
-      console.log('Mutation success, response:', response);
-
-      // Update Zustand store
       if (response?.artistProfile) {
         console.log('Updating store with:', response.artistProfile);
         updateArtistProfileStore(response.artistProfile);
@@ -132,9 +122,6 @@ export const useUpdateArtistProfile = (
 
       options?.onSuccess?.(response, variables, context);
     },
-    onError: (error, variables, context) => {
-      console.error('Artist profile update error:', error.message);
-      options?.onError?.(error, variables, context);
-    },
+  
   });
 };

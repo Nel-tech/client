@@ -22,11 +22,12 @@ export const LoginSchema = z.object({
 
 export type TLoginSchema = z.infer<typeof LoginSchema>;
 
+// Artist Onbaording
 export const OnboardingSchema = z.object({
   fullName: z.string().min(1, { message: 'Please enter your full name.' }),
   stageName: z.string().min(1, { message: 'Stage name is required.' }), // Changed to camelCase
   bio: z.string().min(3, { message: 'Bio must be at least 3 characters.' }),
-  genre: z.enum(['Afrobeats', 'Hip-Hop'], {
+  genre: z.enum(['Afrobeats', 'Hip_Hop'], {
     message: 'Please select a genre',
   }),
 });

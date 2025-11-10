@@ -7,7 +7,10 @@ import {
   ProfileState,
   ProfileStore,
 } from '@/helper/type';
-import { getArtistProfile, getProfileCompletionStatus } from '@/lib/api';
+import {
+  getArtistProfile,
+  getProfileCompletionStatus,
+} from '@/lib/api/endpoints';
 
 const initialState: ProfileState = {
   artistProfile: null,

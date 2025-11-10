@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Bell } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SidebarProps } from '@/helper/type';
 import { TropiqkLogo } from '@/components/Logo';
@@ -47,7 +47,7 @@ export default function Sidebar({
                   className={cn(
                     'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors',
                     activeTab === item.id
-                      ? 'bg-[#ff6b35] text-white'
+                      ? 'bg-[#FF6B35] text-white'
                       : 'hover:text-white'
                   )}
                 >
@@ -57,18 +57,7 @@ export default function Sidebar({
               ))}
             </nav>
 
-            <div className="absolute bottom-4 left-4 right-4">
-              <div className="bg-muted rounded-lg p-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <Bell className="h-4 w-4 text-purple-600" />
-                  <span className="text-sm font-medium">Quick Tip</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Complete your profile to unlock more features and boost your
-                  visibility!
-                </p>
-              </div>
-            </div>
+    
           </motion.aside>
         )}
       </AnimatePresence>
@@ -87,8 +76,8 @@ export default function Sidebar({
               className={cn(
                 'w-full cursor-pointer flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors',
                 activeTab === item.id
-                  ? 'bg-[#ff6b35] text-white'
-                  : 'hover:bg-[#ff6b35] text-white'
+                  ? 'bg-[#FF6B35] text-white'
+                  : 'hover:bg-[#FF6B35] text-white'
               )}
             >
               {item.icon}
@@ -97,18 +86,15 @@ export default function Sidebar({
           ))}
         </nav>
 
-        <div className="absolute bottom-4 left-4 right-4">
+        {/* <div className="absolute bottom-4 left-4 right-4">
           <div className="bg-muted rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
-              <Bell className="h-4 w-4 text-[#ff6b35]" />
+              <Bell className="h-4 w-4 text-[#FF6B35]" />
               <span className="text-sm font-medium text-white">Quick Tip</span>
             </div>
-            <p className="text-xs text-white">
-              Complete your profile to unlock more features and boost your
-              visibility!
-            </p>
+          
           </div>
-        </div>
+        </div> */}
       </aside>
     </>
   );

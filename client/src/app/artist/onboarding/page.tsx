@@ -121,8 +121,8 @@ export default function ArtistOnboardingForm() {
                   <option value="Afrobeats" className="bg-gray-800 text-white">
                     Afrobeats
                   </option>
-                  <option value="Hip-Hop" className="bg-gray-800 text-white">
-                    Hip-Hop
+                  <option value="Hip_Hop" className="bg-gray-800 text-white">
+                    Hip_Hop
                   </option>
                 </select>
                 {errors.genre && (
