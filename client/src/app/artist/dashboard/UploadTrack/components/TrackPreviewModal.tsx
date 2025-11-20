@@ -1,7 +1,7 @@
 import { X, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
-import { TrackPreviewModalProps } from "../../../../helper/type";
-import AudioPlayer from "./AudioPlayer";
+import { TrackPreviewModalProps } from "../../../../../helper/type";
+import AudioPlayer from "../../components/AudioPlayer";
 
 export default function TrackPreviewModal({
   isOpen,

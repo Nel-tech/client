@@ -1,7 +1,6 @@
-// ===== CORE TYPES =====
+// ===== BASE TYPES =====
 
-// Shared base types
-export type RoleType = 'Artist' | 'Fan';
+export type RoleType = 'Artist' | 'Fan' | 'Admin';
 
 export interface BaseEntity {
   id: string;
@@ -10,20 +9,20 @@ export interface BaseEntity {
 }
 
 export interface UserBase {
-  username: string | null;
+  username: string ;
   email: string | null;
   role: RoleType;
-  hasOnboarded:boolean
+  hasOnboarded: boolean;
+}
+
+// ===== USER & PROFILE TYPES =====
+
+export interface BaseUser extends UserBase, Pick<BaseEntity, 'createdAt'> {
+  id: string | null;
 }
 
 export interface ProfileBase extends BaseEntity {
   profilePic: string | null;
-}
-
-// User types
-export interface BaseUser extends UserBase {
-  id: string | null;
-  createdAt: string;
 }
 
 export interface ArtistProfile extends ProfileBase, UserBase {
@@ -37,58 +36,44 @@ export interface FanProfile extends ProfileBase, UserBase {
   displayName: string | null;
 }
 
-// Form data types
-export interface ArtistFormData {
-  fullName: string;
-  stageName: string;
-  genre: string;
-  bio: string;
-}
+export type UserProfile = ArtistProfile | FanProfile | null;
 
-export interface UserData {
-  username: string;
-  email: string;
-}
-
-// ===== AUTH TYPES =====
+// ===== AUTH & USER MANAGEMENT =====
 
 export interface AuthResponse {
   user: BaseUser;
   token?: string;
 }
 
-// ===== USER UPDATE TYPES =====
-
 export interface UpdateUserRequest {
   username: string;
 }
 
-export interface UpdateUserResponse {
+export interface StandardResponse<T = void> {
   message: string;
+  status?: string;
+  success?: boolean;
+}
+
+export interface UpdateUserResponse extends StandardResponse {
   user: BaseUser;
 }
 
-// ===== EMAIL VERIFICATION TYPES =====
-
+// ===== EMAIL VERIFICATION & CHANGES =====
 
 export interface EmailVerification {
   verificationCode: string;
-  email:string;
+  email: string;
 }
+
 export interface ResendVerificationRequest {
-  email: string| null
+  email: string | null;
 }
 
-
-export interface ResendVerificationResponse {
-  message: string;
+export interface ResendVerificationResponse extends StandardResponse {
   success: boolean;
-  expiresIn?:string
+  expiresIn?: string;
 }
-
-// ===== EMAIL VERIFICATION TYPES ENDS HERE =====
-
-
 
 export interface EmailChangeRequest {
   email: string;
@@ -99,9 +84,7 @@ export interface VerifyEmailChangeRequest {
   verificationCode: string;
 }
 
-// Response types
-export interface EmailChangeResponse {
-  message: string;
+export interface EmailChangeResponse extends StandardResponse {
   data?: {
     currentEmail: string;
     newEmail: string;
@@ -109,19 +92,10 @@ export interface EmailChangeResponse {
   };
 }
 
-export interface VerifyEmailChangeResponse {
-  message: string;
-  user:BaseUser
+export interface VerifyEmailChangeResponse extends StandardResponse {
+  user: BaseUser;
 }
 
-export interface ResendCodeResponse {
-  message: string;
-  expiresIn?: string;
-}
-
-export interface CancelChangeResponse {
-  message: string;
-}
 export interface PendingEmailVerification {
   currentEmail: string;
   newEmail: string;
@@ -130,13 +104,42 @@ export interface PendingEmailVerification {
 }
 
 export interface GetPendingResponse {
-  pendingEmailChange: PendingEmailVerification | null;  
+  pendingEmailChange: PendingEmailVerification | null;
 }
 
+// ===== TRACK TYPES =====
 
+// Artist info that comes with tracks
+export interface TrackArtist {
+  id: string;
+  fullName: string;
+  stageName: string;
+  profilePic: string | null;
+}
 
-// ===== TRACK UPLOAD TYPES =====
+// Updated Track interface to match API response
+export interface Track extends BaseEntity {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  genre: string;
+  thumbnail: string;
+  trackUrl: string; 
+  duration: number; 
+  consent: boolean;
+  artistId: string;
+  isVerified: boolean;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  rejectionReason: string | null;
+  createdAt: string;
+  artist: TrackArtist; 
+}
+
 export interface UploadTrackData {
+  status: string;
   title: string;
   description?: string;
   genre: string;
@@ -146,40 +149,9 @@ export interface UploadTrackData {
 }
 
 
-
-export interface TrackPreviewModalProps {
-  isOpen: boolean;
-  formData: UploadTrackData;
-  onSubmit: () => void;
-  onClose: () => void;
-  isLoading: boolean;
-}
-
-export interface FileUploadProps {
-  type: 'thumbnail' | 'audio';
-  file: File | null;
-  preview?: string | null;
-  onFileChange: (file: File | null) => void;
-  error?: string;
-  maxAudioSizeMB?: number;
-}
-
-
-
-export interface UploadTrackResponse {
+export interface UploadTrackResponse extends StandardResponse {
   status: 'success';
-  message: string;
-  track: {
-    id: string;
-    title: string;
-    slug: string;
-    genre: string;
-    description?: string;
-    thumbnail: string; 
-    track: string;
-    artistId: string;
-    createdAt: string;
-  };
+  track: Track;
 }
 
 export interface UpdateTrackDetailsRequest {
@@ -190,33 +162,15 @@ export interface UpdateTrackDetailsRequest {
   thumbnail?: File | null;
 }
 
-export interface TrackResponse {
-  id: string;
-  title: string;
-  slug: string;
-  genre: string;
-  duration:number;
-  description?: string;
-  thumbnail: string; 
-  track: string;
-  artistId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-export interface TrackCardProps {
-  track: TrackResponse;
-  onUpdate?: (updatedTrack: UpdateTrackDetailsRequest) => void;
-}
 
-export interface GetTracksResponse {
+export interface GetTracksResponse extends StandardResponse {
   status: 'success';
   results: number;
-  tracks: TrackResponse[];
-}
+  tracks: Track[]; 
 
-export interface DeleteTrackResponse {
+}
+export interface DeleteTrackResponse extends StandardResponse {
   status: 'success';
-  message: string;
 }
 
 export interface PermissionsResponse {
@@ -226,54 +180,48 @@ export interface PermissionsResponse {
     features: {
       canDelete: boolean;
       canEdit: boolean;
-      // canBulkUpload: boolean;
-      // canScheduleRelease: boolean;
       maxFileSize: number;
-      // analyticsAccess: boolean;
     };
     editableFields: string[];
   };
 }
+// ===== ARTIST PROFILE MANAGEMENT =====
 
-// ===== ARTIST PROFILE TYPES =====
-
-export interface UpdateArtistRequest {
+export interface ArtistFormData {
   fullName: string;
   stageName: string;
   genre: string;
   bio: string;
 }
 
-export interface UpdateArtistResponse {
-  message: string;
+export type UpdateArtistRequest = ArtistFormData;
+
+export interface ProfileCompletion {
+  percentage: number;
+  missingFields: string[];
+}
+
+export interface UpdateArtistResponse extends StandardResponse {
   artist: ArtistProfile;
   profileCompletion?: ProfileCompletion;
 }
-
-// ===== FILE UPLOAD TYPES =====
 
 export interface ProfilePictureRequest {
   file: File;
 }
 
-export interface ProfilePictureResponse {
-  message: string;
+export interface ProfilePictureResponse extends StandardResponse {
   profilePic: string;
   artist: ArtistProfile;
   profileCompletion?: ProfileCompletion;
 }
 
-// ===== ONBOARDING TYPES =====
-
-export interface OnboardingResponse {
-  message: string;
+export interface OnboardingResponse extends StandardResponse {
   role: RoleType;
   artist: ArtistProfile;
 }
 
-// ===== PROFILE TYPES =====
-
-export type UserProfile = ArtistProfile | FanProfile | null;
+// ===== PROFILE STORE =====
 
 export interface ProfileState {
   artistProfile: ArtistProfile | null;
@@ -287,27 +235,31 @@ export interface ProfileState {
 }
 
 export interface ProfileActions {
+  // Artist profile actions
   setArtistProfile: (profile: ArtistProfile | null) => void;
   updateArtistProfile: (updates: Partial<ArtistProfile>) => void;
   clearArtistProfile: () => void;
+  fetchArtistProfile: () => Promise<void>;
 
+  // Fan profile actions
   setFanProfile: (profile: FanProfile | null) => void;
   updateFanProfile: (updates: Partial<FanProfile>) => void;
   clearFanProfile: () => void;
 
+  // State management
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setInitialized: (initialized: boolean) => void;
   clearError: () => void;
   clearAllProfiles: () => void;
 
+  // Cache management
   isDataStale: () => boolean;
   refreshCache: () => void;
 
-  fetchArtistProfile: () => Promise<void>;
+  // Profile operations
   fetchProfileCompletionStatus: () => Promise<void>;
   fetchAndSetArtistData: () => Promise<void>;
-
   getCurrentProfile: (userRole: string) => UserProfile;
   hasProfile: (userRole: string) => boolean;
   getProfileCompletion: (userRole: string) => ProfileCompletion;
@@ -315,16 +267,33 @@ export interface ProfileActions {
 
 export type ProfileStore = ProfileState & ProfileActions;
 
-export interface ProfileCompletion {
-  percentage: number;
-  missingFields: string[];
-}
-
-// ===== UI COMPONENT TYPES =====
+// ===== UI COMPONENT PROPS =====
 
 export interface TabProps {
   activeTab: RoleType;
   setActiveTab: (tab: RoleType) => void;
+}
+
+export interface FileUploadProps {
+  type: 'thumbnail' | 'audio';
+  file: File | null;
+  preview?: string | null;
+  onFileChange: (file: File | null) => void;
+  error?: string;
+  maxAudioSizeMB?: number;
+}
+
+export interface TrackPreviewModalProps {
+  isOpen: boolean;
+  formData: UploadTrackData;
+  onSubmit: () => void;
+  onClose: () => void;
+  isLoading: boolean;
+}
+
+export interface TrackCardProps {
+  track: UploadTrackResponse;
+  onUpdate?: (updatedTrack: UpdateTrackDetailsRequest) => void;
 }
 
 export interface FeatureProps {
@@ -389,8 +358,6 @@ export interface StatCardProps {
   className?: string;
 }
 
-
-
 export interface Fan {
   id: string;
   name: string;
@@ -402,9 +369,7 @@ export interface Fan {
 export interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-  sidebarItems: { id: string; label: string; icon: React.ReactNode }[];
+  sidebarItems: { id: string; label: string; route:string; icon: React.ReactNode }[];
 }
 
 export interface MobileHeaderProps {
@@ -417,14 +382,12 @@ export interface Task {
   completed: boolean;
 }
 
-export interface OverviewTabProps {
-  stats: any[];
-}
+// export interface OverviewTabProps {
+//   stats: any[];
+// }
 
 export interface ProfileProgressCardProps {
   progressPercentage: number;
   profileTasks: Array<{ id: string; task: string; completed: boolean }>;
   message?: string;
 }
-
-

@@ -1,7 +1,7 @@
 import { ProfileProgressCardProps } from "@/helper/type";
 import { motion } from 'framer-motion';
 import Progress from "./Progress";
-import CircleProgress from "./Circle";
+import CircleProgress from "../../components/Circle";
 import { CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 

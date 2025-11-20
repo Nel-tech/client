@@ -1,7 +1,7 @@
 // components/TrackUploadForm.tsx
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { TrackUploadValidator } from '@/lib/validators/track';
-import FileUpload from './FileUpload';
+import FileUpload from '../../components/FileUpload';
 import { Button } from '@/components/ui/button';
 import { UploadTrackData } from '@/helper/type';
 

@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react';
 import { 
 useArtistProfile,
@@ -8,9 +9,9 @@ useArtistProfile,
 } from '@/store/useProfileStore';
 
 import { useAuthUser } from '@/store/useAuthStore';
-import { ProfileHeader } from '../components/ProfileHeader';
+import { ProfileHeader } from './Components/ProfileHeader';
 // import { EmailVerificationBanner } from '../components/EmailVerificationModal';
-import { ProfileContent } from '../components/ProfileContent';
+import { ProfileContent } from './Components/ProfileContent';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorDisplay } from '../components/ErrorDisplay';
 import { useProfileData } from '@/lib/hooks/useProfileData';
@@ -118,19 +119,6 @@ const clearError = useClearError();
         disabled={isSaving}
       />
 
-      {/* {emailFlow.hasPendingVerification && (
-        <EmailVerificationBanner
-          pendingVerification={emailFlow.pendingVerification}
-          verificationCode={verificationCode}
-          setVerificationCode={setVerificationCode}
-          onVerify={handleVerifyEmail}
-          onResend={handleResendCode}
-          onCancel={handleCancelEmailChange}
-          resendCooldown={resendCooldown}
-          isVerifying={emailFlow.hasPendingVerification}
-          isResending={emailFlow.isPendingRequest}
-        />
-      )} */}
 
       <ProfileContent
         isEditing={isEditing}
