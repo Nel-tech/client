@@ -27,13 +27,13 @@ const Login = () => {
     onSuccess: (data) => {
       toast.success(`Welcome back, ${data.username}!`);
       
-      // ✅ Simple redirect - let ProtectedRoute handle the rest
+    
       if (data.role === 'Artist') {
         router.push('/artist/dashboard');
       } else if (data.role === 'Fan') {
         router.push('/fans/dashboard');
       } else {
-        router.push('/');
+        router.push('/admin');
       }
     },
   });

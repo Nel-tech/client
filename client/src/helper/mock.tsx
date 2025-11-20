@@ -11,7 +11,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 
-import { Tracks, Fan } from './type';
+import {  Fan } from './type';
 // lib/config/artist-tiers.ts (or constants/tiers.ts)
 
 export enum ArtistTier {
@@ -309,9 +309,35 @@ export const sidebarItems = [
   {
     id: 'overview',
     label: 'Overview',
+     route: '/artist/dashboard',
     icon: <BarChart3 className="h-5 w-5" />,
   },
-  { id: 'tracks', label: 'Tracks', icon: <Music className="h-5 w-5" /> },
+  { id: 'tracks', label: 'Tracks',  route: '/artist/dashboard/Tracks', icon: <Music className="h-5 w-5" /> },
   // { id: 'fans', label: 'Fans', icon: <Users className="h-5 w-5" /> },
-  { id: 'profile', label: 'Profile', icon: <User className="h-5 w-5" /> },
+  { id: 'profile', label: 'Profile',  route: '/artist/dashboard/Profile',icon: <User className="h-5 w-5" /> },
+];
+
+// data/tracks.ts
+export interface Track {
+  id: string;
+  title: string;
+  artist: string;
+  genre: string;
+  duration: string;
+  uploadedAt: string;
+  thumbnail: string;
+}
+
+export const mockTracks: Track[] = [
+  {
+    id: '1',
+    title: 'Midnight Dreams',
+    artist: 'Luna Eclipse',
+    genre: 'Electronic',
+    duration: '3:45',
+    uploadedAt: '2 days ago',
+    thumbnail:
+      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=80&h=80&fit=crop',
+  },
+  // … the rest of the 5 tracks (same as in your original file)
 ];

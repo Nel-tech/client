@@ -24,8 +24,8 @@ export const useArtistOnboarding = (
   options?: UseMutationOptions<OnboardingResponse, Error, TOnboardingSchema>
 ) => {
   const setProfile = useProfileStore((state) => state.setArtistProfile);
-  const setUser = useAuthStore((state) => state.setUser); // ✅ ADD
-  const currentUser = useAuthStore((state) => state.user); // ✅ ADD
+  const setUser = useAuthStore((state) => state.setUser); // ✅ ADD THIS
+  const currentUser = useAuthStore((state) => state.user); // ✅ ADD THIS
 
   return useMutation<OnboardingResponse, Error, TOnboardingSchema>({
     mutationFn: ArtistOnboarding,
@@ -38,25 +38,21 @@ export const useArtistOnboarding = (
       };
       setProfile(updatedArtist);
 
-      // ✅ CRITICAL: Also update AuthStore
+      // ✅ CRITICAL FIX: Update AuthStore too!
       if (currentUser) {
         setUser({
           ...currentUser,
-          hasOnboarded: true, 
+          hasOnboarded: true,
         });
       }
 
-      console.log('✅ Both stores updated:', {
-        profileStore: updatedArtist,
-        authStore: useAuthStore.getState().user,
-      });
+      console.log('✅ Onboarding complete - both stores updated');
 
       options?.onSuccess?.(response, variables, context);
     },
     ...options,
   });
 };
-
 
 export const useProfilePictureUpload = (
   options?: UseMutationOptions<

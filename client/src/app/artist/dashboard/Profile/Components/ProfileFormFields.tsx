@@ -1,5 +1,5 @@
 // components/ProfileFormFields.tsx
-import { ArtistFormData, UserData, BaseUser, ArtistProfile, GetPendingResponse } from '@/helper/type';
+import { ArtistFormData, UserBase, BaseUser, ArtistProfile, GetPendingResponse } from '@/helper/type';
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, AlertCircle } from 'lucide-react';
 import { EmailChangeModal } from './EmailChangeModal';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 
 interface ProfileFormFieldsProps {
   isEditing: boolean;
-  userData: UserData;
+  userData: UserBase;
   artistFormData: ArtistFormData;
   onUserInputChange: (field: string, value: string) => void;
   onArtistInputChange: (field: string, value: string) => void;

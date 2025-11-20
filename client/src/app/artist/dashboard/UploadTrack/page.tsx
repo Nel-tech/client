@@ -1,12 +1,12 @@
-// components/UploadTrack.tsx
+"use client"
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUploadTrack } from '@/lib/queries/track-queries';
 import { TrackUploadValidator, trackUploadSchema } from '@/lib/validators/track';
 import { useTrackUploadState } from '@/lib/hooks/useTrackUpload';
-import TrackUploadForm from '../components/TrackUploadForm';
-import TrackPreviewModal from '../components/TrackPreviewModal';
+import TrackUploadForm from './components/TrackUploadForm';
+import TrackPreviewModal from './components/TrackPreviewModal';
 import { ArrowLeft } from 'lucide-react';
 import { UploadTrackData } from '@/helper/type';
 import { toast } from 'sonner';
@@ -59,12 +59,15 @@ export default function UploadTrack({ onCancel }: UploadTrackProps) {
       consent: data.consent,
       track: trackData.track,
       thumbnail: trackData.thumbnail,
+      status:trackData.status
     };
 
     uploadTrack(uploadData, {
       onSuccess: () => {
         setShowPreviewModal(false);
         handleCancel();
+
+        toast.success('Track uploaded! Our admin team will review it shortly')
       },
     });
   });
@@ -104,7 +107,9 @@ export default function UploadTrack({ onCancel }: UploadTrackProps) {
   formData={{
     ...watch(),           
     track: trackData.track,  
+    status:trackData.status,
     thumbnail: trackData.thumbnail 
+    
   }}
   onSubmit={handleSubmitTrack}
   onClose={() => setShowPreviewModal(false)}

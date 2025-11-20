@@ -16,7 +16,6 @@ import {
   UpdateArtistRequest,
   UpdateTrackDetailsRequest,
   UploadTrackResponse,
-  TrackResponse,
   GetTracksResponse,
   DeleteTrackResponse,
   PermissionsResponse,
@@ -25,9 +24,9 @@ import {
   ResendVerificationResponse,
   VerifyEmailChangeRequest,
   VerifyEmailChangeResponse,
-  ResendCodeResponse,
-  CancelChangeResponse,
+ StandardResponse,
   GetPendingResponse,
+  PendingTracks,
 } from '@/helper/type';
 
 // ==================== AUTH ENDPOINTS ====================
@@ -140,18 +139,17 @@ export const verifyEmailChange = async (
 };
 
 // For Email Change
-export const resendVerification =
-  async (): Promise<ResendCodeResponse> => {
-    const response = await api.post('/api/user/resend-verification');
-    return response.data;
-  };
+export const resendVerification = async (): Promise<ResendVerificationResponse> => {
+  const response = await api.post('/api/user/resend-verification');
+  return response.data;
+};
 
 export const getPendingEmailChange = async (): Promise<GetPendingResponse> =>{
 const response = await api.get('/api/user/pending-email-change')
 return response.data
 } 
 
-export const cancelEmailChange = async (): Promise<CancelChangeResponse> => {
+export const cancelEmailChange = async (): Promise<StandardResponse> => {
   const response = await api.delete('/api/user/cancel-email-change');
   return response.data;
 };
@@ -197,20 +195,16 @@ export const getCurrentArtistTracks = async (): Promise<GetTracksResponse> => {
  */
 export const getTrackById = async (
   trackId: string
-): Promise<{ status: 'success'; data: TrackResponse }> => {
+): Promise<{ status: 'success'; data: UploadTrackResponse }> => {
   const response = await api.get(`/api/artist/tracks/${trackId}`);
   return response.data;
 };
 
-/**
- * Update track details
- */
 export const updateTrackDetails = async (
   data: UpdateTrackDetailsRequest
-): Promise<{ status: 'success'; message: string; track: TrackResponse }> => {
+): Promise<{ status: 'success'; message: string; track: UploadTrackResponse }> => {
   const { id, thumbnail, ...updateData } = data;
 
-  // If thumbnail is provided, use FormData
   if (thumbnail) {
     const formData = new FormData();
     if (updateData.title) formData.append('title', updateData.title);
@@ -220,7 +214,7 @@ export const updateTrackDetails = async (
     formData.append('thumbnail', thumbnail);
 
     const response = await api.patch(
-      `/api/artists/tracks/${id}`,
+      `/api/artists/tracks/${id}`, 
       formData,
       {
         headers: {
@@ -233,15 +227,13 @@ export const updateTrackDetails = async (
 
   // Otherwise, send JSON
   const response = await api.patch(
-    `/api/artist/tracks/${id}`,
+    `/api/artists/tracks/${id}`, 
     updateData
   );
   return response.data;
 };
 
-/**
- * Delete a track
- */
+
 export const deleteTrack = async (
   trackId: string
 ): Promise<DeleteTrackResponse> => {
@@ -260,6 +252,43 @@ export const getPermissions = async (): Promise<PermissionsResponse> => {
   );
   return response.data;
 };
+
+
+
+// Admin EndPoints
+
+export const getPendingTracks = async (): Promise<UploadTrackResponse> => {
+  const response = await api.get<UploadTrackResponse>('/api/admin/tracks/pending');
+
+  return response.data;
+};
+
+export const getTracksByStatus = async (): Promise< UploadTrackResponse> => {
+  const response = await api.get<UploadTrackResponse>('/api/admin/tracks/');
+  return response.data;
+};
+
+export const ApproveTrack= async(trackId:string): Promise<UploadTrackResponse> => {
+  const response = await api.post< UploadTrackResponse>(`/api/admin/tracks/${trackId}/approve`)
+
+  return response.data
+}
+
+export const RejectTrack= async(trackId:string): Promise<UploadTrackResponse> => {
+  const response = await api.post< UploadTrackResponse>(`/api/admin/tracks/${trackId}/reject`)
+  return response.data
+}
+
+// export const getStats = async (): Promise<UploadTrackResponse> => {
+//   const response = await api.get<UploadTrackResponse>('/api/admin/tracks/');
+//   return response.data;
+// };
+
+// export const getTracksByStatus = async (): Promise<PendingTracks> => {
+//   const response = await api.get<PendingTracks>('/api/admin/tracks/');
+
+//   return response.data;
+// };
 
  export const verifyArtist = async () => {};
 // ;

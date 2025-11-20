@@ -10,6 +10,7 @@ export function useTrackUploadState() {
     consent: false,
     track: null,
     thumbnail: null,
+    status:''
   });
 
   const handleThumbnailChange = (file: File | null) => {
@@ -41,6 +42,7 @@ export function useTrackUploadState() {
       consent: false,
       track: null,
       thumbnail: null,
+      status:''
     });
   };
 

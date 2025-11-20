@@ -4,7 +4,7 @@ import {
   useQueryClient,
   UseMutationOptions,
 } from '@tanstack/react-query';
-import { useState } from 'react';
+
 import {
   uploadTrack,
   getCurrentArtistTracks,
@@ -72,7 +72,7 @@ export const useUploadTrack = (
   options?: UseMutationOptions<UploadTrackResponse, Error, UploadTrackData>
 ) => {
   const queryClient = useQueryClient();
-  const [uploadProgress, setUploadProgress] = useState(0);
+
 
   return useMutation<UploadTrackResponse, Error, UploadTrackData>({
     mutationFn: uploadTrack,
@@ -96,12 +96,12 @@ export const useUpdateTrackDetails = (
   const queryClient = useQueryClient(); 
 
   return useMutation<any, Error, UpdateTrackDetailsRequest>({
-    mutationFn: updateTrackDetails, 
+    mutationFn: (data: UpdateTrackDetailsRequest) => updateTrackDetails(data), // ✅ Fixed
     onSuccess: (data, variables, context) => {
-    
-      queryClient.invalidateQueries({ queryKey: ['track', variables.trackId] });
-
-     
+      // ✅ Fixed: using variables.id instead of variables
+      queryClient.invalidateQueries({ queryKey: ['track', variables.id] });
+      
+      // Invalidate the track list
       queryClient.invalidateQueries({ queryKey: ['artistTracks'] });
 
       // Call custom onSuccess if provided
