@@ -44,7 +44,7 @@ export default function TrackUsageCard({ tier, trackCount }: TrackUsageCardProps
   const isAtLimit = trackCount >= limit;
 
   return (
-    <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 shadow-lg">
+    <div className="  p-6 ">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         {/* Left Section - Usage Info */}
         <div className="flex-1 space-y-4">
@@ -69,9 +69,9 @@ export default function TrackUsageCard({ tier, trackCount }: TrackUsageCardProps
                 {trackCount} of {limit} tracks used
               </span>
               <span className={`font-semibold ${
-                isAtLimit ? "text-red-400" : 
-                isNearLimit ? "text-yellow-400" : 
-                "text-green-400"
+                isAtLimit ? "text-[#ff6b35]" : 
+                isNearLimit ? "text-[#ff6b35]" : 
+                "text-[#ff6b35]"
               }`}>
                 {percentage.toFixed(0)}%
               </span>
@@ -80,17 +80,17 @@ export default function TrackUsageCard({ tier, trackCount }: TrackUsageCardProps
             <div className="h-3 bg-gray-700/50 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
-                  isAtLimit ? "bg-gradient-to-r from-red-500 to-red-600" :
-                  isNearLimit ? "bg-gradient-to-r from-yellow-500 to-orange-500" :
-                  "bg-gradient-to-r from-green-500 to-emerald-500"
+                  isAtLimit ? "bg-[#ff6b35]" :
+                  isNearLimit ? "bg-[#ff6b35]" :
+                  "bg-[#ff6b35]"
                 }`}
                 style={{ width: `${Math.min(percentage, 100)}%` }}
               />
             </div>
 
             {isNearLimit && (
-              <p className="text-xs text-yellow-400 flex items-center gap-1 mt-2">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+              <p className="text-xs text-[#ff6b35] flex items-center gap-1 mt-2">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#ff6b35] animate-pulse" />
                 {isAtLimit ? "You've reached your upload limit" : "You're close to your upload limit"}
               </p>
             )}
@@ -102,7 +102,7 @@ export default function TrackUsageCard({ tier, trackCount }: TrackUsageCardProps
           <div className="lg:w-64">
             <div className="p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-lg space-y-3">
               <div className="flex items-center gap-2">
-                <Crown className="w-5 h-5 text-yellow-400" />
+                <Crown className="w-5 h-5 text-[#ff6b35]" />
                 <h4 className="text-sm font-semibold text-white">
                   Need more tracks?
                 </h4>
@@ -112,7 +112,7 @@ export default function TrackUsageCard({ tier, trackCount }: TrackUsageCardProps
               </p>
               <button
                 onClick={() => router.push("/artist/subscription")}
-                className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-all shadow-lg hover:shadow-purple-500/50"
+                className="w-full px-4 py-2 bg-[#ff6b35] hover:bg-[#ff6b35] text-white text-sm font-medium rounded-lg transition-all shadow-lg hover:shadow-purple-500/50"
               >
                 Upgrade Now
               </button>

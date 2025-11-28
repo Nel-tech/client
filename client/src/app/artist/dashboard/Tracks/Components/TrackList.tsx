@@ -1,12 +1,18 @@
-// components/artist/TrackTab/TrackList.tsx
 "use client";
+
 import { useState } from "react";
 import { Track } from "@/helper/type";
 import TrackCard from "./TrackCard";
-import { Music, Loader2, AlertCircle, Trash2 } from "lucide-react";
+import { Music, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
+import Loading from "./ui/Loading";
+import Error from "./ui/Error";
+import Empty from "./ui/Empty";
+import { EditTrackDetails } from "./EditTrackDetails";
+import { useDeleteTrack } from "@/lib/queries/track-queries";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 interface TrackListProps {
   tracks: Track[];
   isLoading: boolean;
@@ -29,10 +35,21 @@ export default function TrackList({
   onSeek,
 }: TrackListProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
+  // Get editing track ID from URL
+  const editingTrackId = searchParams.get("edit");
+  const deleteMutation = useDeleteTrack()
+
   const handleEdit = (trackId: string) => {
-    router.push(`/artist/tracks/edit/${trackId}`);
+    router.push(`?edit=${trackId}`, { scroll: false });
+  };
+
+  const handleEditOpenChange = (open: boolean) => {
+    if (!open) {
+      router.push(`?`, { scroll: false });
+    }
   };
 
   const handleDelete = (trackId: string) => {
@@ -40,79 +57,24 @@ export default function TrackList({
   };
 
   const confirmDelete = async (trackId: string) => {
-    // TODO: Implement your delete mutation here
-    // Example:
-    // await deleteTrackMutation.mutateAsync(trackId);
-    console.log("Deleting track:", trackId);
+    try {
+      await deleteMutation.mutateAsync(trackId)
+      toast.success('Track Successfully Deleted')
+    } catch (error:unknown) {
+       toast.error(error.response?.data?.error || 'Failed to Delete Track');
+    }
     setDeleteConfirm(null);
+  
   };
 
   const cancelDelete = () => {
     setDeleteConfirm(null);
   };
 
-  // Loading State
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
-        <p className="text-gray-400 text-sm">Loading your tracks...</p>
-      </div>
-    );
-  }
+  if (isLoading) return <Loading />;
+  if (isError) return <Error />;
+  if (tracks.length === 0) return <Empty />;
 
-  // Error State
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <div className="p-4 rounded-full bg-red-500/10">
-          <AlertCircle className="w-12 h-12 text-red-500" />
-        </div>
-        <div className="text-center space-y-2">
-          <h3 className="text-lg font-semibold text-white">
-            Failed to load tracks
-          </h3>
-          <p className="text-gray-400 text-sm">
-            Something went wrong. Please try again later.
-          </p>
-        </div>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-lg transition-all"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  // Empty State
-  if (tracks.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-6">
-        <div className="relative">
-          <div className="absolute inset-0  blur-3xl opacity-20 rounded-full" />
-          <div className="relative p-6 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700">
-            <Music className="w-16 h-16 text-gray-400" />
-          </div>
-        </div>
-        <div className="text-center space-y-2 max-w-md">
-          <h3 className="text-2xl font-bold text-white">No tracks yet</h3>
-          <p className="text-gray-400">
-            Upload your first track to start building your music collection
-          </p>
-        </div>
-        <button
-          onClick={() => router.push("/artist/tracks/upload")}
-          className="px-8 py-3 bg-[#ff6b35] text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-purple-500/50"
-        >
-          Upload Your First Track
-        </button>
-      </div>
-    );
-  }
-
-  // Track List
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -154,6 +116,15 @@ export default function TrackList({
         </div>
       </AnimatePresence>
 
+      {/* Edit Track Dialog - controlled by URL */}
+      {editingTrackId && (
+        <EditTrackDetails
+          trackid={editingTrackId}
+          open={!!editingTrackId}
+          onOpenChange={handleEditOpenChange}
+        />
+      )}
+
       {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {deleteConfirm && (
@@ -169,40 +140,31 @@ export default function TrackList({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-2xl p-6 shadow-2xl"
+              className="w-full max-w-md bg-black rounded-2xl p-6 shadow-2xl"
             >
               <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-full bg-red-500/10">
-                  <Trash2 className="w-6 h-6 text-red-500" />
-                </div>
+               
                 <div>
-                  <h3 className="text-lg font-semibold text-white">
-                    Delete Track
-                  </h3>
-                  <p className="text-sm text-gray-400">
-                    This action cannot be undone
-                  </p>
+                  <h3 className="text-lg font-semibold text-white">Delete Track</h3>
+                  <p className="text-sm text-gray-400">This action cannot be undone</p>
                 </div>
               </div>
-
               <p className="text-gray-300 mb-6">
-                Are you sure you want to delete this track? All associated data
-                will be permanently removed.
+                Are you sure you want to delete this track? All associated data will be permanently removed.
               </p>
-
               <div className="flex gap-3">
-                <button
+                <Button
                   onClick={cancelDelete}
                   className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => confirmDelete(deleteConfirm)}
                   className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium rounded-lg transition-all"
                 >
                   Delete
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

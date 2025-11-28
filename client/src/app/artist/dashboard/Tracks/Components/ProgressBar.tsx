@@ -29,7 +29,7 @@ const ProgressBar = memo(function ProgressBar({ currentTime, duration, onSeek, f
       >
         {/* GPU-accelerated progress using transform */}
         <div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-500 to-pink-500 transition-transform duration-75"
+          className="absolute inset-y-0 left-0 bg-[#ff6b35] transition-transform duration-75"
           style={{
             transform: `translateX(${progress - 100}%)`,
             width: "100%",

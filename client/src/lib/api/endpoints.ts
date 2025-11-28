@@ -195,50 +195,58 @@ export const getCurrentArtistTracks = async (): Promise<GetTracksResponse> => {
  */
 export const getTrackById = async (
   trackId: string
-): Promise<{ status: 'success'; data: UploadTrackResponse }> => {
+): Promise<UploadTrackResponse> => {
   const response = await api.get(`/api/artist/tracks/${trackId}`);
+  console.log("Response", response.data)
   return response.data;
 };
 
+
 export const updateTrackDetails = async (
   data: UpdateTrackDetailsRequest
-): Promise<{ status: 'success'; message: string; track: UploadTrackResponse }> => {
-  const { id, thumbnail, ...updateData } = data;
+): Promise<UploadTrackResponse> => {
+  const { trackId, thumbnail, ...updateData } = data;
 
+  console.log('🔍 Update data:', { trackId, thumbnail, updateData });
+
+  // If thumbnail exists, send as FormData
   if (thumbnail) {
     const formData = new FormData();
+
     if (updateData.title) formData.append('title', updateData.title);
     if (updateData.description)
       formData.append('description', updateData.description);
     if (updateData.genre) formData.append('genre', updateData.genre);
+
     formData.append('thumbnail', thumbnail);
 
+    console.log('📤 Sending FormData with thumbnail');
+
     const response = await api.patch(
-      `/api/artists/tracks/${id}`, 
+      `/api/artist/tracks/${trackId}`,
       formData,
       {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       }
     );
+
     return response.data;
   }
 
-  // Otherwise, send JSON
-  const response = await api.patch(
-    `/api/artists/tracks/${id}`, 
-    updateData
-  );
+  // If no thumbnail, send as JSON
+  console.log('📤 Sending JSON without thumbnail');
+  const response = await api.patch(`/api/artist/tracks/${trackId}`, updateData);
+
   return response.data;
 };
+
 
 
 export const deleteTrack = async (
   trackId: string
 ): Promise<DeleteTrackResponse> => {
   const response = await api.delete<DeleteTrackResponse>(
-    `/api/artists/tracks/${trackId}`
+    `/api/artist/tracks/${trackId}`
   );
   return response.data;
 };

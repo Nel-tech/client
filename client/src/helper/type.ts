@@ -122,7 +122,7 @@ export interface Track extends BaseEntity {
   id: string;
   title: string;
   slug: string;
-  description: string | null;
+  description: string ;
   genre: string;
   thumbnail: string;
   trackUrl: string; 
@@ -149,13 +149,10 @@ export interface UploadTrackData {
 }
 
 
-export interface UploadTrackResponse extends StandardResponse {
-  status: 'success';
-  track: Track;
-}
+export interface UploadTrackResponse extends StandardResponse, Track {}
 
 export interface UpdateTrackDetailsRequest {
-  id: string;
+  trackId: string;
   title?: string;
   description?: string;
   genre?: string;

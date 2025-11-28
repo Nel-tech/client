@@ -43,13 +43,18 @@ export default function ProtectedRoute({
       userRole: user?.role,
     });
 
+    // ⏳ Wait for initial auth check or token refresh to complete
     if (loading || !initialized || isRefreshing) {
       console.log('⏳ Waiting for auth state...', {
         loading,
         initialized,
         isRefreshing,
-        hasUser: !!user,
       });
+      return;
+    }
+
+    // Don't proceed if already redirected
+    if (hasRedirected.current) {
       return;
     }
 
@@ -62,10 +67,9 @@ export default function ProtectedRoute({
       });
     }
 
-    if (hasRedirected.current) return;
-
     // 🚫 Not logged in → go to login
     if (!user) {
+      console.log('❌ No user found, redirecting to login');
       hasRedirected.current = true;
       router.replace(redirectTo);
       return;
@@ -73,26 +77,38 @@ export default function ProtectedRoute({
 
     // 🚦 Onboarding redirect logic by role
     if (!user.hasOnboarded) {
+      console.log('⚠️ User not onboarded, redirecting...');
       hasRedirected.current = true;
 
       if (user.role === 'Artist') {
         router.replace('/artist/onboarding');
-      } else if (user.role === 'Fan') {
-        router.replace('/fan/onboarding');
       } else {
-        router.replace('/'); // fallback
+        router.replace('/');
       }
+      // } 
+      // else if (user.role === 'Fan') {
+      //   router.replace('/fan/onboarding');
       return;
     }
 
-    // 🔒 Check role authorization
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
-      hasRedirected.current = true;
-      router.replace('/unauthorized');
-      return;
+    // 🔒 Check role authorization ONLY if allowedRoles is specified
+    if (allowedRoles && allowedRoles.length > 0) {
+      if (!allowedRoles.includes(user.role)) {
+        console.log('🚫 User role not allowed:', {
+          userRole: user.role,
+          allowedRoles,
+        });
+        hasRedirected.current = true;
+        router.replace('/unauthorized');
+        return;
+      }
     }
+
+    // ✅ All checks passed
+    console.log('✅ All authorization checks passed');
   }, [loading, initialized, isRefreshing, user, allowedRoles, router, redirectTo]);
 
+  // Show spinner during initial load, auth loading, or token refresh
   if (loading || !initialized || isRefreshing) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -101,7 +117,8 @@ export default function ProtectedRoute({
     );
   }
 
-  if (!user) {
+  // Show spinner while redirecting
+  if (!user || hasRedirected.current) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Spinner />
@@ -109,7 +126,8 @@ export default function ProtectedRoute({
     );
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  // Show spinner if role check fails (before redirect happens)
+  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Spinner />
@@ -117,6 +135,6 @@ export default function ProtectedRoute({
     );
   }
 
-  // ✅ All checks passed
+  // ✅ All checks passed - render children
   return <>{children}</>;
 }

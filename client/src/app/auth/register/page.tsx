@@ -20,7 +20,7 @@ const Register = () => {
   const roleParams = useSearchParams();
   const role = roleParams.get('role');
 
-  const validRole = role === 'Fans' || role === 'Artist' ? role : undefined;
+  const validRole = role === 'Fan' || role === 'Artist' ? role : undefined;
 
   const {
     register,
@@ -54,7 +54,7 @@ const onSubmit = (formData: TRegistrationSchema) => {
 
   const completeFormData = {
     ...formData,
-    role: validRole as 'Fans' | 'Artist',
+    role: validRole as 'Fan' | 'Artist',
   };
 
   registerUser(completeFormData);

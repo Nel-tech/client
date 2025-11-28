@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useResendVerification, useEmailVerification } from '@/lib/queries/auth-queries';
 import { toast } from 'sonner';
+import { useAuthUser } from '@/store/useAuthStore';
+
 
 export default function EmailVerification() {
   const [code, setCode] = useState('');
@@ -13,7 +15,7 @@ export default function EmailVerification() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
-  
+  const user = useAuthUser()
   const resendMutation = useResendVerification();
   const VerifyEmail = useEmailVerification()
 
@@ -44,8 +46,14 @@ export default function EmailVerification() {
     setIsVerifying(true);
     try {
       await VerifyEmail.mutateAsync({ email, code });
-      toast.success('Email verified successfully!');
-      router.push('/artist/onboarding');
+
+      if(user?.role === 'Artist'){
+        toast.success('Email verified successfully!');
+        router.push('/artist/onboarding');
+      }else if(user?.role === 'Fan'){
+         toast.success('Email verified successfully!');
+        router.push('/fans/dashboard');
+      }
     } catch (error: string) {
       const errorMsg = error.response?.data?.error || error.message;
      if (errorMsg?.includes('expired')) {

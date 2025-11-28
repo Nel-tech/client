@@ -8,7 +8,8 @@ import TrackArt from "./TrackArt";
 import TrackInfo from "./TrackInfo";
 import ProgressBar from "./ProgressBar";
 import Controls from "./Controls";
-import VolumeControl from "./VolumeControl";
+import { Button } from "@/components/ui/button";
+// import VolumeControl from "./VolumeControl";
 
 interface EnhancedMediaPlayerProps {
   audioRef: RefObject<HTMLAudioElement | null>;
@@ -33,8 +34,8 @@ const EnhancedMediaPlayer = memo(function EnhancedMediaPlayer({
   handleVolumeChange,
 }: EnhancedMediaPlayerProps) {
   // All hooks at the top — ALWAYS unconditional
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
+  // const [volume, setVolume] = useState(1);
+  // const [isMuted, setIsMuted] = useState(false);
 
   const formatTime = useCallback((time: number) => {
     if (!isFinite(time)) return "0:00";
@@ -48,23 +49,23 @@ const EnhancedMediaPlayer = memo(function EnhancedMediaPlayer({
     handleSeek(newTime);
   }, [currentTime, duration, handleSeek]); // deps are stable enough
 
-  const toggleMute = useCallback(() => {
-    if (!audioRef.current) return;
-    if (isMuted) {
-      audioRef.current.volume = volume;
-      setIsMuted(false);
-    } else {
-      audioRef.current.volume = 0;
-      setIsMuted(true);
-    }
-  }, [audioRef, volume, isMuted]);
+  // const toggleMute = useCallback(() => {
+  //   if (!audioRef.current) return;
+  //   if (isMuted) {
+  //     audioRef.current.volume = volume;
+  //     setIsMuted(false);
+  //   } else {
+  //     audioRef.current.volume = 0;
+  //     setIsMuted(true);
+  //   }
+  // }, [audioRef, volume, isMuted]);
 
-  const onVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVol = parseFloat(e.target.value);
-    setVolume(newVol);
-    handleVolumeChange(newVol);
-    setIsMuted(newVol === 0);
-  }, [handleVolumeChange]);
+  // const onVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newVol = parseFloat(e.target.value);
+  //   setVolume(newVol);
+  //   handleVolumeChange(newVol);
+  //   setIsMuted(newVol === 0);
+  // }, [handleVolumeChange]);
 
   // Early return AFTER all hooks
   if (!currentTrack) {
@@ -76,14 +77,14 @@ const EnhancedMediaPlayer = memo(function EnhancedMediaPlayer({
       <audio ref={audioRef} preload="metadata" />
 
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-        <div className="relative w-full max-w-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-black rounded-2xl shadow-2xl border border-gray-700/50 overflow-hidden">
-          <button
+        <div className="relative w-full max-w-2xl bg-black rounded-2xl shadow-2xl border border-gray-700/50 overflow-hidden">
+          <Button
             onClick={handleClosePlayer}
             className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700 transition-colors"
             aria-label="Close player"
           >
             <X className="w-6 h-6 text-gray-300" />
-          </button>
+          </Button>
 
           <TrackArt thumbnail={currentTrack.thumbnail} title={currentTrack.title} />
 
@@ -104,12 +105,12 @@ const EnhancedMediaPlayer = memo(function EnhancedMediaPlayer({
               onSkipForward={() => skipTime(10)}
             />
 
-            <VolumeControl
+            {/* <VolumeControl
               volume={isMuted ? 0 : volume}
               isMuted={isMuted || volume === 0}
               onVolumeChange={onVolumeChange}
               onMuteToggle={toggleMute}
-            />
+            /> */}
           </div>
         </div>
       </div>
@@ -126,3 +127,5 @@ const EnhancedMediaPlayer = memo(function EnhancedMediaPlayer({
     prev.currentTrack?.thumbnail === next.currentTrack?.thumbnail
   );
 });
+
+export default  EnhancedMediaPlayer

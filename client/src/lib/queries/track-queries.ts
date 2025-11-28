@@ -99,7 +99,7 @@ export const useUpdateTrackDetails = (
     mutationFn: (data: UpdateTrackDetailsRequest) => updateTrackDetails(data), // ✅ Fixed
     onSuccess: (data, variables, context) => {
       // ✅ Fixed: using variables.id instead of variables
-      queryClient.invalidateQueries({ queryKey: ['track', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['track', variables.trackId] });
       
       // Invalidate the track list
       queryClient.invalidateQueries({ queryKey: ['artistTracks'] });

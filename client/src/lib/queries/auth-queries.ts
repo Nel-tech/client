@@ -73,7 +73,7 @@ export const useEmailVerification = (
   return useMutation<
     VerifyEmailResponse,
     unknown,
-    { email: string; code: string, verificationCode:string }
+    { email: string; code: string}
   >({
     mutationFn: async (data) => {
       await verifyEmailAction(data);

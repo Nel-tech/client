@@ -7,12 +7,13 @@ import TrackHeader from "./Components/TrackHeader";
 import { useAudioPlayer } from "@/lib/hooks/useAudioPlayer";
 import EnhancedMediaPlayer from "./Components/MediaPlayerDialog";
 
+
+
 export default function TrackTab() {
   const { data: tracksData, isLoading, isError } = useCurrentArtistTracks();
   const { data: permissionInfo } = useArtistPermissions();
   const tracks = tracksData?.tracks || [];
   const tier = permissionInfo?.data?.tier ?? "BASIC";
-
   const audioPlayer = useAudioPlayer();
 
   return (
@@ -30,7 +31,7 @@ export default function TrackTab() {
         {/* Track Usage Progress Card */}
         <TrackUsageCard tier={tier} trackCount={tracks.length} />
         
-        {/* List of all tracks - CORRECTED: pass entire tracks array */}
+        {/* List of all tracks  */}
         <TrackList
           tracks={tracks}
           isLoading={isLoading}
@@ -41,6 +42,12 @@ export default function TrackTab() {
           onPlayToggle={audioPlayer.handlePlayToggle}
           onSeek={audioPlayer.handleSeek}
         />
+
+        {/* Editing Tracks */}
+
+        {/* <EditTrackDetails trackid={trackid as string} /> */}
+
+       
       </div>
     </>
   );

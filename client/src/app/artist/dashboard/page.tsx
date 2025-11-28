@@ -49,6 +49,8 @@ export default function Dashboard() {
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -ml-24 -mb-24" />
       </div>
 
+      <StatCard value='200' icon='' label='stats'/>
+
       {/* Profile Progress */}
       <ProfileProgressCard
         progressPercentage={progressPercentage}

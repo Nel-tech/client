@@ -1,169 +1,152 @@
+'use client';
+
 import { Track } from '@/helper/type';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Play, Pause, Pencil, Trash, Music2 } from 'lucide-react';
+import { Play, Pause, Pencil, Trash2, Music2, Clock, CheckCircle2, AlertCircle, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface TrackCardProps {
   track: Track;
   isPlaying?: boolean;
- 
-  currentTime?: number;
   onPlayToggle: (track: Track) => void;
   onEdit: (trackId: string) => void;
   onDelete: (trackId: string) => void;
-  onSeek?: (time: number) => void;
 }
 
-// const formatDuration = (seconds?: number | null) => {
-//   if (!seconds) return "0:00";
-//   const m = Math.floor(seconds / 60);
-//   const s = Math.floor(seconds % 60);
-//   return `${m}:${s < 10 ? '0' + s : s}`;
-// };
+const primary = '#ff6b35';
+const primaryHover = '#ff8a65';
 
-const TrackCard = ({ 
-  track, 
-  isPlaying = false, 
-
-  currentTime = 0,
-  onPlayToggle, 
-  onEdit, 
+export default function TrackCard({
+  track,
+  isPlaying = false,
+  onPlayToggle,
+  onEdit,
   onDelete,
-  onSeek
-}: TrackCardProps) => {
-  const duration = track?.duration || 0;
-  const progress = duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
-
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!onSeek || !duration) return;
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const percentage = clickX / rect.width;
-    const newTime = percentage * duration;
-    
-    onSeek(newTime);
+}: TrackCardProps) {
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  const statusConfig = {
+    APPROVED: { color: 'emerald', icon: CheckCircle2, label: 'Approved' },
+    PENDING: { color: 'amber', icon: Timer, label: 'Pending' },
+    REJECTED: { color: 'red', icon: AlertCircle, label: 'Rejected' },
+  };
+
+  const status = statusConfig[track.status] || statusConfig.PENDING;
 
   return (
     <motion.div
-      layout 
+      layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="group relative flex flex-col gap-3 p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] transition-all duration-200 border border-white/5 hover:border-white/10"
+      exit={{ opacity: 0, scale: 0.98 }}
+      whileHover={{ y: -6 }}
+      className="group relative overflow-hidden rounded-2xl bg-zinc-900/90 backdrop-blur-xl border border-zinc-800 hover:border-zinc-700 transition-all duration-400"
+      style={{
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+      }}
     >
-      <div className="flex items-center gap-4">
-        {/* Thumbnail */}
-        <div className="relative w-16 h-16 shrink-0 rounded-lg overflow-hidden shadow-lg ring-1 ring-white/10">
-          <Image 
-            src={track.thumbnail || '/placeholder-track.jpg'}
-            alt={track.title}
-            fill 
-            className="object-cover" 
-          />
+      {/* Top accent bar in your brand color */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#ff6b35] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Play/Pause Overlay */}
-          <button
-            onClick={() => onPlayToggle(track)}
-            className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200"
-          >
-            <div className="bg-[#ff6b35] rounded-full p-2.5 transform hover:scale-110 transition-transform shadow-xl">
-              {isPlaying ? (
-                <Pause className="h-5 w-5 text-white" />
-              ) : (
-                <Play className="h-5 w-5 text-white ml-0.5" />
+      <div className="p-6">
+        <div className="flex items-start gap-6">
+          {/* Thumbnail */}
+          <div className="relative w-28 h-28 rounded-xl overflow-hidden bg-zinc-800 ring-2 ring-zinc-700/50 group-hover:ring-[#ff6b35]/30 transition-all duration-300">
+            <Image
+              src={track.thumbnail || '/placeholder-track.jpg'}
+              alt={track.title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+
+            {/* Play Overlay */}
+            <motion.button
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onPlayToggle(track)}
+              className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm group-hover:bg-black/50 transition-all"
+            >
+              <div className={`rounded-full p-4 bg-white/20 backdrop-blur-md shadow-2xl transition-all ${isPlaying ? 'bg-white text-black' : 'group-hover:bg-white/30'}`}>
+                {isPlaying ? (
+                  <Pause className="w-7 h-7 fill-current" />
+                ) : (
+                  <Play className="w-7 h-7 fill-current ml-1" />
+                )}
+              </div>
+            </motion.button>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 min-w-0 space-y-4">
+            {/* Title + Status */}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xl font-bold text-white tracking-tight truncate">
+                  {track.title}
+                </h3>
+                {track.description && (
+                  <p className="mt-1 text-sm text-zinc-400 line-clamp-2 leading-relaxed">
+                    {track.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Status Badge */}
+              {track.status && (
+                <Badge
+                  variant="outline"
+                  className={`border-${status.color}-500/30 bg-${status.color}-500/10 text-${status.color}-300 px-3 py-1.5`}
+                >
+                  <status.icon className="w-3.5 h-3.5 mr-1.5" />
+                  <span className="text-xs font-medium tracking-wider">{status.label}</span>
+                </Badge>
               )}
             </div>
-          </button>
 
-          {/* Playing Indicator */}
-          {isPlaying && (
-            <div className="absolute bottom-2 right-2 flex items-center gap-0.5">
-              {[0, 1, 2].map(i => (
-                <motion.div
-                  key={i}
-                  className="w-0.5 bg-[#ff6b35] rounded-full"
-                  animate={{ height: ['4px', '14px', '4px'] }}
-                  transition={{ 
-                    duration: 0.8, 
-                    repeat: Infinity, 
-                    delay: i * 0.15,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
+            {/* Meta Row */}
+            <div className="flex flex-wrap items-center gap-5 text-sm text-zinc-400">
+              <div className="flex items-center gap-2">
+                <Music2 className="w-4 h-4 text-zinc-500" />
+                <span className="text-zinc-300">{track.genre || 'No Genre'}</span>
+              </div>
+
+              {track.duration ? (
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-zinc-500" />
+                  <span className="text-zinc-300">{formatDuration(track.duration)}</span>
+                </div>
+              ) : null}
             </div>
-          )}
-        </div>
-
-        {/* Track Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-white truncate group-hover:text-[#ff6b35] transition-colors">
-              {track.title}
-            </h3>
-            {/* Status Badge */}
-            {track.status && (
-              <span className={`
-                px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider shrink-0
-                ${track?.status === 'APPROVED' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : ''}
-                ${track?.status === 'PENDING' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : ''}
-                ${track?.status === 'REJECTED' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/20' : ''}
-              `}>
-                {track.status}
-              </span>
-            )}
           </div>
-          <div className="flex items-center gap-2 mt-1 text-xs text-gray-400">
-            <Music2 className="h-3 w-3" />
-            <span>{track.genre || 'Unknown'}</span>
-          </div>
-          {track.description && (
-            <p className="text-xs text-gray-500 mt-1 line-clamp-1">
-              {track.description}
-            </p>
-          )}
-        </div>
 
-        {/* Time Display - Desktop
-        <div className="hidden md:flex flex-col items-end gap-1 min-w-[60px]">
-          <div className="text-sm text-gray-400 font-mono">
-            {formatDuration(duration)}
-          </div>
-        </div> */}
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => onEdit(track.id)}
+              className="h-11 w-11 rounded-xl border-zinc-700 hover:border-[#ff6b35]/50 hover:bg-[#ff6b35]/10 text-zinc-400 hover:text-[#ff6b35] transition-all"
+            >
+              <Pencil className="w-4.5 h-4.5" />
+            </Button>
 
-        {/* Actions - Now visible for all tiers */}
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button 
-            size="icon" 
-            variant="ghost" 
-            onClick={() => onEdit(track.id)}
-            className="h-8 w-8 hover:bg-white/10"
-            title="Edit track"
-          >
-            <Pencil className="h-4 w-4 text-gray-400 hover:text-[#ff6b35] transition-colors" />
-          </Button>
-          <Button 
-            size="icon" 
-            variant="ghost" 
-            onClick={() => onDelete(track.id)} 
-            className="h-8 w-8 hover:bg-red-500/10"
-            title="Delete track"
-          >
-            <Trash className="h-4 w-4 text-gray-400 hover:text-red-400 transition-colors" />
-          </Button>
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => onDelete(track.id)}
+              className="h-11 w-11 rounded-xl border-zinc-700 hover:border-red-500/50 hover:bg-red-500/10 text-zinc-400 hover:text-red-400 transition-all"
+            >
+              <Trash2 className="w-4.5 h-4.5" />
+            </Button>
+          </div>
         </div>
       </div>
-
-     
-      {/* Subtle divider when not playing */}
-      {!isPlaying && duration > 0 && (
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-      )}
     </motion.div>
   );
-};
-
-export default TrackCard;
+}

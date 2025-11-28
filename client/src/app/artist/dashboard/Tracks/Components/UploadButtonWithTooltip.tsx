@@ -28,7 +28,7 @@ export default function UploadButtonWithTooltip({
 
   const handleUploadClick = () => {
     if (canUpload) {
-      router.push("/artist/tracks/upload");
+      router.push("/artist/dashboard/UploadTrack");
     }
   };
 
@@ -43,7 +43,7 @@ export default function UploadButtonWithTooltip({
           flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all
           ${
             canUpload
-              ? "bg-[#ff6b35]  text-white shadow-lg hover:shadow-purple-500/50"
+              ? "bg-[#ff6b35]  text-white shadow-lg  cursor-pointer"
               : "bg-gray-700 text-gray-400 cursor-not-allowed"
           }
         `}

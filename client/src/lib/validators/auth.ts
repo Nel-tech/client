@@ -6,7 +6,7 @@ export const RegistrationSchema = z.object({
   password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters long.' }),
-  role: z.enum(['Fans', 'Artist'], {
+  role: z.enum(['Fan', 'Artist'], {
     message: 'Role is required',
   }),
   referralCode: z.string().optional(),
@@ -32,3 +32,13 @@ export const OnboardingSchema = z.object({
   }),
 });
 export type TOnboardingSchema = z.infer<typeof OnboardingSchema>;
+
+// Fans Onboarding
+export const FanOnboardingSchema = z.object({
+  genre: z.enum(['Afrobeats', 'Hip_Hop'], {
+    message: 'Please select a genre',
+  }),
+
+  profilePic: z.string({ message: 'Please Provide a Profile-Picture' }),
+});
+export type FOnboardingSchema = z.infer<typeof FanOnboardingSchema>;
