@@ -1,9 +1,9 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { useAuthStore } from '../../store/useAuthStore';
-import { logoutApi, resendVerificationCode } from '../api/endpoints';
+import { logoutApi, resendVerificationCode } from '../api/endpoints/user/user';
 import { TRegistrationSchema, TLoginSchema } from '../validators/auth';
 import { toast } from 'sonner';
-import { BaseUser } from '@/helper/type';
+import { BaseUser } from '@/lib/api/endpoints/user/type';
 import { useRouter } from 'next/navigation';
 // Response types
 interface RegisterResponse {

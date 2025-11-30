@@ -82,13 +82,12 @@ export default function ProtectedRoute({
 
       if (user.role === 'Artist') {
         router.replace('/artist/onboarding');
-      } else {
-        router.replace('/');
-      }
-      // } 
-      // else if (user.role === 'Fan') {
-      //   router.replace('/fan/onboarding');
-      return;
+         } else if (user.role === 'Fan') {
+             router.replace('/fans/onboarding');
+        } else {
+          return;
+         
+        }
     }
 
     // 🔒 Check role authorization ONLY if allowedRoles is specified

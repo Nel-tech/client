@@ -1,16 +1,14 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import {
-  ArtistProfile,
-  FanProfile,
-  ProfileState,
-  ProfileStore,
-} from '@/helper/type';
+
+
+import { ArtistProfile } from '@/lib/api/endpoints/artist/type';
+import { ProfileState, ProfileStore } from '@/helper/type';
 import {
   getArtistProfile,
   getProfileCompletionStatus,
-} from '@/lib/api/endpoints';
+} from '@/lib/api/endpoints/artist/artist';
 
 const initialState: ProfileState = {
   artistProfile: null,
@@ -237,26 +235,8 @@ export const useProfileStore = create<ProfileStore>()(
               missingFields.push(field);
             }
           });
-        } else if (
-          userRole.toLowerCase() === 'fan' &&
-          'displayName' in profile
-        ) {
-          const fanProfile = profile as FanProfile;
-          const requiredFields = [
-            'displayName',
-            'favoriteGenres',
-            ...commonRequiredFields,
-          ];
-
-          totalFields = requiredFields.length;
-
-          requiredFields.forEach((field) => {
-            if (fanProfile[field as keyof FanProfile]) {
-              completedFields++;
-            } else {
-              missingFields.push(field);
-            }
-          });
+        }
+        {
         }
 
         const percentage =

@@ -10,9 +10,9 @@ import {
   getTracksByStatus,
   ApproveTrack,
   RejectTrack,
-} from '../api/endpoints';
+} from '../api/endpoints/admin/admin';
 
-import { UploadTrackResponse } from '@/helper/type';
+import { UploadTrackResponse } from '../api/endpoints/track/type';
 
 export const usePendingTracks = () => {
   return useQuery<UploadTrackResponse, Error>({

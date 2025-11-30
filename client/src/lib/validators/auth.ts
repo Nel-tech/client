@@ -39,6 +39,11 @@ export const FanOnboardingSchema = z.object({
     message: 'Please select a genre',
   }),
 
+  xHandle: z.string().optional(),
+  instagram: z.string().optional(),
+  facebook: z.string().optional(),
+  tiktok: z.string().optional(),
+
   profilePic: z.string({ message: 'Please Provide a Profile-Picture' }),
 });
 export type FOnboardingSchema = z.infer<typeof FanOnboardingSchema>;

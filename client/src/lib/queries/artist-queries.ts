@@ -9,23 +9,19 @@ import { useAuthStore } from '@/store/useAuthStore';
 import {
   getProfileCompletionStatus,
   ArtistOnboarding,
-  uploadProfileImage,
   updateArtistProfile,
-} from '../api/endpoints';
+} from '../api/endpoints/artist/artist';
+import { uploadProfileImage } from '../api/endpoints/artist/artist';
 import { TOnboardingSchema } from '../validators/auth';
-import {
-  OnboardingResponse,
-  ProfilePictureResponse,
-  ProfilePictureRequest,
-  UpdateArtistRequest,
-} from '@/helper/type';
+import { OnboardingResponse } from '../api/endpoints/artist/type';
+import { ProfilePictureRequest, ProfilePictureResponse, UpdateArtistRequest } from '../api/endpoints/artist/type';
 import { useUpdateArtistProfile as useUpdateArtistProfileStore } from '@/store/useProfileStore';
 export const useArtistOnboarding = (
   options?: UseMutationOptions<OnboardingResponse, Error, TOnboardingSchema>
 ) => {
   const setProfile = useProfileStore((state) => state.setArtistProfile);
-  const setUser = useAuthStore((state) => state.setUser); // ✅ ADD THIS
-  const currentUser = useAuthStore((state) => state.user); // ✅ ADD THIS
+  const setUser = useAuthStore((state) => state.setUser); 
+  const currentUser = useAuthStore((state) => state.user); 
 
   return useMutation<OnboardingResponse, Error, TOnboardingSchema>({
     mutationFn: ArtistOnboarding,
@@ -86,7 +82,7 @@ export const useProfilePictureUpload = (
       });
       options?.onSuccess?.(response, variables, context);
     },
- 
+
     ...options,
   });
 };
@@ -118,6 +114,5 @@ export const useUpdateArtistProfile = (
 
       options?.onSuccess?.(response, variables, context);
     },
-  
   });
 };

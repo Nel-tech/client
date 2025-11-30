@@ -12,7 +12,7 @@ import {
   updateTrackDetails,
   deleteTrack,
   getPermissions,
-} from '../../lib/api/endpoints';
+} from '../../lib/api/endpoints/track/track';
 import {
 
   UpdateTrackDetailsRequest,
@@ -21,7 +21,7 @@ import {
   DeleteTrackResponse,
   PermissionsResponse,
   UploadTrackData,
-} from '../../helper/type';
+} from '../../lib/api/endpoints/track/type';
 // ============================================
 // QUERY HOOKS (for fetching data)
 // ============================================

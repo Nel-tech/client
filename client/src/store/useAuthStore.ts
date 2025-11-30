@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import { AxiosError } from 'axios';
-import { BaseUser } from '@/helper/type';
+import { BaseUser } from '@/lib/api/endpoints/user/type';
 import {
   getCurrentUser,
   logoutApi,
   login,
   verifyEmail,
   register,
-} from '@/lib/api/endpoints';
+} from '@/lib/api/endpoints/user/user';
 import { TRegistrationSchema, TLoginSchema } from '@/lib/validators/auth';
 
 interface AuthState {
@@ -23,7 +23,7 @@ interface AuthActions {
   registerAction: (data: TRegistrationSchema) => Promise<void>;
   verifyEmailAction: (data: {
     email: string;
-    verificationCode: string;
+    code: string;
   }) => Promise<void>;
   loginAction: (data: TLoginSchema) => Promise<void>;
   logout: () => Promise<void>;
@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
           pendingVerificationEmail: response.email,
         });
       }
-       console.log('Response User', response.user);
+      console.log('Response User', response.user);
     } catch (error) {
       console.error('Register failed:', error);
       const errorMessage = getErrorMessage(error);
@@ -85,7 +85,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
 
   verifyEmailAction: async (data: {
     email: string;
-    verificationCode: string;
+    code: string;
   }) => {
     set({ loading: true, error: null });
     try {
@@ -99,7 +99,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         pendingVerificationEmail: null,
       });
 
-      console.log('Response User',response.user)
+      console.log('Response User', response.user);
     } catch (error) {
       console.error('Verification failed:', error);
       const errorMessage = getErrorMessage(error);
@@ -122,7 +122,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         error: null,
         pendingVerificationEmail: null,
       });
-       console.log('Response User LoginAction', user);
+      console.log('Response User LoginAction', user);
     } catch (error) {
       console.error('Login failed:', error);
 
@@ -205,7 +205,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         error: null,
       });
       console.log('✅ Auth initialized successfully');
-      console.log("CurrentUser", user)
+      console.log('CurrentUser', user);
     } catch (error) {
       console.error('Auth initialization failed:', error);
 

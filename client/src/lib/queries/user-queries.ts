@@ -13,7 +13,7 @@ import {
   verifyEmailChange,
   getPendingEmailChange,
   cancelEmailChange,
-} from '../api/endpoints';
+} from '../api/endpoints/user/user';
 import {
   UpdateUserResponse,
   EmailChangeResponse,
@@ -23,7 +23,7 @@ import {
   ResendCodeResponse,
   CancelChangeResponse,
   GetPendingResponse,
-} from '../../helper/type';
+} from '../../lib/api/endpoints/user/type';
 import { UpdateUserData, RequestEmailChangeData } from '../validators/user';
 
 // Update User Profile Hook
