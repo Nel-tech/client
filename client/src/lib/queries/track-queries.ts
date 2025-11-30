@@ -5,6 +5,7 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query';
 
+
 import {
   uploadTrack,
   getCurrentArtistTracks,
@@ -74,6 +75,7 @@ export const useUploadTrack = (
   const queryClient = useQueryClient();
 
 
+
   return useMutation<UploadTrackResponse, Error, UploadTrackData>({
     mutationFn: uploadTrack,
     onSuccess: (data, variables, context) => {
@@ -96,6 +98,7 @@ export const useUpdateTrackDetails = (
   const queryClient = useQueryClient(); 
 
   return useMutation<any, Error, UpdateTrackDetailsRequest>({
+    mutationFn: (data: UpdateTrackDetailsRequest) => updateTrackDetails(data), // ✅ Fixed
     mutationFn: (data: UpdateTrackDetailsRequest) => updateTrackDetails(data), // ✅ Fixed
     onSuccess: (data, variables, context) => {
       // ✅ Fixed: using variables.id instead of variables

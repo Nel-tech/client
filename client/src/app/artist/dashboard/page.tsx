@@ -32,6 +32,40 @@ export default function Dashboard() {
     );
   }
 
+'use client'
+
+import StatCard from './components/StatCard';
+import { useProfileCompletionStatus } from '@/lib/queries/artist-queries';
+import { TrendingUp, Heart, Star, Clock } from 'lucide-react';
+import Spinner from '@/components/loader/spinner';
+import ProfileProgressCard from './Profile/Components/ProfileProgressCard';
+import { Card } from '@/components/ui/card';
+// import { Separator } from '@/components/ui/separator';
+
+export default function Dashboard() {
+  const { data: completionData, isLoading } = useProfileCompletionStatus();
+  
+  const completedFields = completionData?.data?.profileCompletion?.completedFields || [];
+  const missingFields = completionData?.data?.profileCompletion?.missingFields || [];
+  const allFields = [...completedFields, ...missingFields];
+  const completedFieldsSet = new Set(completedFields);
+  
+  const profileTasks = allFields.map((field: string) => ({
+    id: field,
+    task: `Complete ${field}`,
+    completed: completedFieldsSet.has(field),
+  }));
+  
+  const progressPercentage = completionData?.data?.profileCompletion?.completionPercentage || 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 p-6 max-w-7xl mx-auto">
       {/* Welcome Section - Enhanced */}

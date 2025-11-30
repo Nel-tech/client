@@ -35,13 +35,16 @@ export const useArtistOnboarding = (
       setProfile(updatedArtist);
 
       // ✅ CRITICAL FIX: Update AuthStore too!
+      // ✅ CRITICAL FIX: Update AuthStore too!
       if (currentUser) {
         setUser({
           ...currentUser,
           hasOnboarded: true,
+          hasOnboarded: true,
         });
       }
 
+      console.log('✅ Onboarding complete - both stores updated');
       console.log('✅ Onboarding complete - both stores updated');
 
       options?.onSuccess?.(response, variables, context);
