@@ -27,7 +27,7 @@ export const ProfileHeader = ({
       ) : (
         <button
           onClick={onEditToggle}
-          className="flex items-center gap-2 text-[#ff6b35] hover:text-[#e55a2b] transition-colors"
+          className="flex items-center gap-2 text-[#ff6b35] cursor-pointer hover:text-[#e55a2b] transition-colors"
         >
           <Edit3 className="h-4 w-4" />
           Edit Profile

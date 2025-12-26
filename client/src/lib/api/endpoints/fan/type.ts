@@ -1,7 +1,7 @@
-import { StandardResponse, ProfileBase, UserBase, RoleType } from "../user/type";
+import { StandardResponse, ProfileBase, BaseUser, RoleType } from "../user/type";
 
 
-export interface FanProfile extends ProfileBase, UserBase {
+export interface FanProfile extends ProfileBase, BaseUser {
   genres: string[];
   xHandle: string;
   instagram: string;

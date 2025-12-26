@@ -1,6 +1,6 @@
 // hooks/useTracks.ts
 import { useState, useMemo } from 'react';
-import { mockTracks, Track } from '@/helper/mock';
+import { mockTracks } from '@/helper/mock';
 
 type Filter = 'all' | 'new' | 'trusted';
 type Sort = 'oldest' | 'newest';

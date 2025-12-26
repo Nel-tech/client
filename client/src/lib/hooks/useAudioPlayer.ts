@@ -1,7 +1,7 @@
 // hooks/useAudioPlayer.ts
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Track } from '@/helper/type';
+import { Track } from '@/lib/api/endpoints/track/type';
 
 export function useAudioPlayer() {
   const router = useRouter();

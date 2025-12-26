@@ -91,7 +91,7 @@ export function HeroSection() {
             className="mt-10 font-poppins cursor-pointer flex flex-col items-center justify-center gap-4 sm:flex-row"
             variants={itemVariants}
           >
-            <Link href="/auth/register?role=Artist">
+            <Link href="/auth/signup-options">
               <motion.div
                 variants={buttonVariants}
                 whileHover="hover"
@@ -101,23 +101,7 @@ export function HeroSection() {
                   size="lg"
                   className="cursor-pointer font-poppins w-full sm:w-auto bg-[#FF6B35] text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl active:shadow-md"
                 >
-                  Sign Up as an Artist
-                </Button>
-              </motion.div>
-            </Link>
-
-            <Link href="/auth/register?role=Fan">
-              <motion.div
-                variants={buttonVariants}
-                whileHover="hover"
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="cursor-pointer w-full sm:w-auto border-2 border-neutral-700 text-neutral-300 font-semibold rounded-lg transition-all duration-300 ease-in-out hover:bg-neutral-800/50 hover:text-white hover:border-neutral-600"
-                >
-                  Join as a Fan
+                  Get Started
                 </Button>
               </motion.div>
             </Link>

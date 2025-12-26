@@ -1,5 +1,5 @@
 import { StandardResponse, BaseEntity } from "../user/type";
-
+import { ArtistTier, CampaignStatus } from "@/helper/mock";
 export interface TrackArtist {
   id: string;
   fullName: string;
@@ -61,11 +61,13 @@ export interface PermissionsResponse {
   status: 'success';
   data: {
     tier: string;
-    features: {
-      canDelete: boolean;
-      canEdit: boolean;
-      maxFileSize: number;
-    };
-    editableFields: string[];
   };
+}
+export interface Campaign{
+  trackId:string
+  userId:string
+  artistId:string
+  tier:ArtistTier
+  paymentRefrence:string
+  status?:CampaignStatus
 }

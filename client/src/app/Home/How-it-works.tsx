@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Tab from '@/components/Tab';
 import { artistSteps, fanSteps } from '@/helper/mock';
-import { RolesTypes } from '@/helper/type';
+import { RoleTypes } from '@/helper/type';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import {
@@ -14,8 +14,8 @@ import {
 } from '@/components/Variants';
 
 export function HowItWorksSection() {
-  const [activeTab, setActiveTab] = useState<RolesTypes>('artist');
-  const steps = activeTab === 'artist' ? artistSteps : fanSteps;
+  const [activeTab, setActiveTab] = useState<RoleTypes>('Artist');
+  const steps = activeTab === 'Artist' ? artistSteps : fanSteps;
 
   return (
     <section id="how-it-works" className="w-full py-20 md:py-28">

@@ -1,16 +1,17 @@
 import { ProfileImageSection } from './ProfileImageSection';
 import { ProfileFormFields } from './ProfileFormFields';
-import { ArtistFormData, BaseUser } from '@/helper/type';
+import {  UserFormData, BaseUser} from '@/lib/api/endpoints/user/type';
+import { ArtistFormData } from '@/lib/api/endpoints/artist/type';
 
 interface ProfileContentProps {
   isEditing: boolean;
-  userData:BaseUser ;
+  userData:UserFormData;
   artistFormData: ArtistFormData;
   onUserInputChange: (field: string, value: string) => void;
   onArtistInputChange: (field: string, value: string) => void;
   onImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSave: () => void;
-  user: BaseUser;
+  user: BaseUser | null; 
   artist: any;
   emailFlow: any;
   isSaving: boolean;

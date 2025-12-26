@@ -33,11 +33,13 @@ const redirectToLogin = () => {
   if (typeof window !== 'undefined') {
     const currentPath = window.location.pathname;
 
-    // CRITICAL: Don't redirect if already on auth pages
+    // Don't redirect if already on auth pages
     if (currentPath.startsWith('/auth/')) {
       console.log('⚠️ Already on auth page, skipping redirect');
       return;
     }
+
+    console.log('🔐 Redirecting to login from:', currentPath);
 
     // Clear auth state
     useAuthStore.getState().clearAuth();
@@ -50,10 +52,32 @@ const redirectToLogin = () => {
   }
 };
 
+// ✅ REQUEST INTERCEPTOR - Clean version
+api.interceptors.request.use(
+  (config) => {
+    console.log('📤 Request:', config.method?.toUpperCase(), config.url);
+    // ✅ REMOVED: document.cookie check (httpOnly cookies are invisible to JS)
+    // Cookies are automatically sent via withCredentials: true
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// ✅ RESPONSE INTERCEPTOR
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ErrorResponse>) => {
-    if (!error.response) {
+    console.log('🚨 Error intercepted:', {
+      status: error.response?.status,
+      url: error.config?.url,
+      code: error.response?.data?.code,
+    });
+
+    // No response or no config = can't retry
+    if (!error.response || !error.config) {
       return Promise.reject(error);
     }
 
@@ -61,69 +85,62 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
-    if (!originalRequest) {
-      return Promise.reject(error);
-    }
-
+    // Only handle 401 errors that haven't been retried
     if (error.response.status === 401 && !originalRequest._retry) {
       const errorData = error.response.data;
 
-      // Handle special cases that shouldn't trigger refresh
-      if (
+      // ✅ Skip refresh for special cases
+      const shouldSkipRefresh =
         errorData?.code === 'EMAIL_NOT_VERIFIED' ||
         errorData?.code === 'NO_REFRESH_TOKEN' ||
-        originalRequest.url?.includes('/api/auth/refresh') ||
-        originalRequest.url?.includes('/api/auth/login')
-      ) {
+        errorData?.code === 'REFRESH_FAILED' ||
+        originalRequest.url?.includes('/auth/refresh') ||
+        originalRequest.url?.includes('/auth/login');
+
+      if (shouldSkipRefresh) {
+        console.log('⚠️ Skipping refresh:', errorData?.code || 'auth endpoint');
+
+        // Redirect to login if refresh failed or no refresh token
         if (
-          originalRequest.url?.includes('/api/auth/refresh') ||
-          errorData?.code === 'NO_REFRESH_TOKEN'
+          originalRequest.url?.includes('/auth/refresh') ||
+          errorData?.code === 'NO_REFRESH_TOKEN' ||
+          errorData?.code === 'REFRESH_FAILED'
         ) {
-          console.log(
-            '🔐 Refresh failed or no refresh token, redirecting to login'
-          );
           redirectToLogin();
         }
         return Promise.reject(error);
       }
 
-      // If already refreshing, queue this request
+      // ✅ Queue requests if refresh is already in progress
       if (isRefreshing) {
-        console.log('⏳ Token refresh in progress, queueing request');
+        console.log('⏳ Refresh in progress, queueing request');
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then(() => {
-            console.log('✅ Retrying queued request after token refresh');
-            return api(originalRequest);
-          })
-          .catch((err) => {
-            console.error('❌ Queued request failed:', err);
-            return Promise.reject(err);
-          });
+          .then(() => api(originalRequest))
+          .catch((err) => Promise.reject(err));
       }
 
+      // ✅ Start refresh process
       originalRequest._retry = true;
       isRefreshing = true;
 
       console.log('🔄 Starting token refresh...');
-
-      // Notify the auth store that refresh is starting
       useAuthStore.getState().setIsRefreshing(true);
 
       try {
-        // Attempt to refresh the token
+        // ✅ Call refresh endpoint (refreshToken cookie sent automatically)
         await api.post('/api/auth/refresh');
 
         console.log('✅ Token refreshed successfully');
 
-        // Process all queued requests
+        // Process queued requests
         processQueue();
 
-        // Retry the original request with new token
+        // Retry original request with new accessToken cookie
         return api(originalRequest);
       } catch (refreshError) {
-        console.error('❌ Token refresh failed:', refreshError);
+        console.error('❌ Token refresh failed');
 
         // Reject all queued requests
         processQueue(refreshError);
@@ -135,7 +152,6 @@ api.interceptors.response.use(
       } finally {
         isRefreshing = false;
         useAuthStore.getState().setIsRefreshing(false);
-        console.log('🏁 Token refresh process completed');
       }
     }
 

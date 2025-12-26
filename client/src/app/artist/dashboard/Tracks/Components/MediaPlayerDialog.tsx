@@ -1,8 +1,8 @@
 // components/artist/TrackTab/EnhancedMediaPlayer.tsx
 "use client";
 
-import { RefObject, memo, useState, useCallback } from "react";
-import { Track } from "@/helper/type";
+import { RefObject, memo, useCallback } from "react";
+import { Track } from "@/lib/api/endpoints/track/type";
 import { X } from "lucide-react";
 import TrackArt from "./TrackArt";
 import TrackInfo from "./TrackInfo";

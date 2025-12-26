@@ -30,10 +30,8 @@ const Login = () => {
     
       if (data.role === 'Artist') {
         router.push('/artist/dashboard');
-      } else if (data.role === 'Fan') {
-        router.push('/fans/dashboard');
-      } else {
-        router.push('/admin');
+      }  else {
+        router.push('/');
       }
     },
   });

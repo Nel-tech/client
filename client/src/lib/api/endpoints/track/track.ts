@@ -7,7 +7,8 @@ import {
   DeleteTrackResponse,
   PermissionsResponse,
   UploadTrackData,
-} from '@/helper/type';
+  Campaign,
+} from '@/lib/api/endpoints/track/type';
 
 
 export const uploadTrack = async (
@@ -88,9 +89,6 @@ export const updateTrackDetails = async (
 
     return response.data;
   }
-
-  // If no thumbnail, send as JSON
-  console.log('📤 Sending JSON without thumbnail');
   const response = await api.patch(`/api/artist/tracks/${trackId}`, updateData);
 
   return response.data;
@@ -116,4 +114,9 @@ export const getPermissions = async (): Promise<PermissionsResponse> => {
   );
   return response.data;
 };
+
+export const createCampaign= async():Promise<Campaign> => {
+  const response = await api.post<Campaign>('api/artist/create-campaign')
+  return response.data
+}
 

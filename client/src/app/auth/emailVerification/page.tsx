@@ -45,15 +45,13 @@ export default function EmailVerification() {
 
     setIsVerifying(true);
     try {
-      await VerifyEmail.mutateAsync({ email, code });
+   const response =   await VerifyEmail.mutateAsync({ email, code });
 
-      if(user?.role === 'Artist'){
+      if(response?.user?.role === 'Artist'){
         toast.success('Email verified successfully!');
         router.push('/artist/onboarding');
-      }else if(user?.role === 'Fan'){
-         toast.success('Email verified successfully!');
-        router.push('/fans/dashboard');
-      }
+      };
+      
     } catch (error: string) {
       const errorMsg = error.response?.data?.error || error.message;
      if (errorMsg?.includes('expired')) {
@@ -102,7 +100,7 @@ export default function EmailVerification() {
           <button
             type="submit"
             disabled={code.length !== 6 || isVerifying}
-            className="w-full bg-[#ff6b35] text-white py-3 rounded-lg font-semibold hover:bg-[#e55a2b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#ff6b35]  cursor-pointer text-white py-3 rounded-lg font-semibold hover:bg-[#e55a2b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isVerifying ? 'Verifying...' : 'Verify Email'}
           </button>

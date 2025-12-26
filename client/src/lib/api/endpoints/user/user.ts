@@ -61,11 +61,11 @@ export const requestEmailChange = async (
 };
 
 export const verifyEmailChange = async (
-  verificationData: VerifyEmailChangeRequest
+  token: string 
 ): Promise<VerifyEmailChangeResponse> => {
-  const response = await api.put(
+  const response = await api.post(
     '/api/user/verify-email-change',
-    verificationData
+    { token: token } 
   );
   return response.data;
 };
@@ -79,6 +79,7 @@ export const resendVerification =
 
 export const getPendingEmailChange = async (): Promise<GetPendingResponse> => {
   const response = await api.get('/api/user/pending-email-change');
+  console.log('Response',response.data)
   return response.data;
 };
 

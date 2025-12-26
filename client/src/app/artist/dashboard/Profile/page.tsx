@@ -10,7 +10,6 @@ useArtistProfile,
 
 import { useAuthUser } from '@/store/useAuthStore';
 import { ProfileHeader } from './Components/ProfileHeader';
-// import { EmailVerificationBanner } from '../components/EmailVerificationModal';
 import { ProfileContent } from './Components/ProfileContent';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorDisplay } from '../components/ErrorDisplay';
@@ -22,6 +21,7 @@ import {
 
 function ProfileTab() {
   const artistProfile = useArtistProfile();
+  console.log("AertistPeof", artistProfile)
   const user = useAuthUser();
   const loading = useProfileLoading();
   const error = useProfileError();
@@ -31,7 +31,6 @@ function ProfileTab() {
 const clearError = useClearError();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
@@ -75,9 +74,6 @@ const clearError = useClearError();
     handleImageUpload,
     handleEditToggle,
     handleSaveChanges,
-    // handleVerifyEmail,
-    // handleResendCode,
-    // handleCancelEmailChange,
   } = createProfileHandlers({
     userData,
     artistFormData, 
@@ -87,8 +83,6 @@ const clearError = useClearError();
     updateArtist,
     uploadProfilePic,
     emailFlow,
-    verificationCode,
-    setVerificationCode,
     setUserData,
     setArtistFormData, 
     setIsEditing,

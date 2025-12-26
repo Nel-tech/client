@@ -16,42 +16,40 @@ import { TOnboardingSchema } from '../validators/auth';
 import { OnboardingResponse } from '../api/endpoints/artist/type';
 import { ProfilePictureRequest, ProfilePictureResponse, UpdateArtistRequest } from '../api/endpoints/artist/type';
 import { useUpdateArtistProfile as useUpdateArtistProfileStore } from '@/store/useProfileStore';
+
 export const useArtistOnboarding = (
   options?: UseMutationOptions<OnboardingResponse, Error, TOnboardingSchema>
 ) => {
   const setProfile = useProfileStore((state) => state.setArtistProfile);
-  const setUser = useAuthStore((state) => state.setUser); 
-  const currentUser = useAuthStore((state) => state.user); 
+  const setUser = useAuthStore((state) => state.setUser);
+  const currentUser = useAuthStore((state) => state.user);
 
   return useMutation<OnboardingResponse, Error, TOnboardingSchema>({
     mutationFn: ArtistOnboarding,
     retry: false,
-    onSuccess: (response, variables, context) => {
-      // Update ProfileStore
-      const updatedArtist = {
-        ...response.artist,
-        hasOnboarded: true,
-      };
-      setProfile(updatedArtist);
+    onSuccess: async (response, variables, context) => {
+      
+      const artistData = response.data.artist;
 
-      // ✅ CRITICAL FIX: Update AuthStore too!
-      // ✅ CRITICAL FIX: Update AuthStore too!
-      if (currentUser) {
-        setUser({
-          ...currentUser,
-          hasOnboarded: true,
-          hasOnboarded: true,
-        });
+      if (!artistData) {
+        console.error('❌ No artist data found in response!');
+        console.error('Response structure:', response);
+        return;
       }
 
-      console.log('✅ Onboarding complete - both stores updated');
-      console.log('✅ Onboarding complete - both stores updated');
+      console.log('✅ Found artist data:', artistData);
+
+      setProfile(artistData);
+
+      if (currentUser) {
+        setUser({ ...currentUser, hasOnboarded: true });
+      }
 
       options?.onSuccess?.(response, variables, context);
     },
-    ...options,
   });
 };
+
 
 export const useProfilePictureUpload = (
   options?: UseMutationOptions<

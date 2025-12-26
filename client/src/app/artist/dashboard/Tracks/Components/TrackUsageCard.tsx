@@ -10,8 +10,8 @@ interface TrackUsageCardProps {
 
 const TRACK_LIMITS = {
   BASIC: 5,
-  PREMIUM: 20,
-  PRO: 100,
+  PRO: 15,
+  ULTIMATE: 50,
 };
 
 const TIER_INFO = {
@@ -20,13 +20,13 @@ const TIER_INFO = {
     color: "from-gray-500 to-gray-600",
     icon: Music,
   },
-  PREMIUM: {
-    name: "Premium",
+  PRO: {
+    name: "Pro",
     color: "from-purple-500 to-pink-500",
     icon: TrendingUp,
   },
-  PRO: {
-    name: "Pro",
+  ULTIMATE: {
+    name: "Ultimate",
     color: "from-yellow-500 to-orange-500",
     icon: Crown,
   },

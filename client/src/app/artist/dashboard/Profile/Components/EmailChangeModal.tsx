@@ -98,8 +98,8 @@ export const EmailChangeModal = ({
 
           <div className="bg-[#ff6b35]/10 border border-[#ff6b35]/30 rounded-lg p-3">
             <p className="text-xs text-gray-300">
-              We&apos;ll send a verification code to your new email address.
-              You&apos;ll need to enter it to complete the change.
+              Please Check your EmailAddress Instructions on what next to do is been set to your email.
+              
             </p>
           </div>
 
@@ -113,9 +113,9 @@ export const EmailChangeModal = ({
             <Button
               onClick={handleSubmit}
               disabled={!newEmail || !password || isRequesting}
-              className="flex-1 bg-[#ff6b35] text-white px-4 py-3 rounded-lg hover:bg-[#e55a2b] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-[#ff6b35] cursor-pointer text-white px-4 py-3 rounded-lg hover:bg-[#e55a2b] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isRequesting ? 'Sending...' : 'Send Verification Code'}
+              {isRequesting ? 'Sending...' : 'Change Email'}
             </Button>
           </div>
         </div>

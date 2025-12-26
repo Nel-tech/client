@@ -2,8 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Decode JWT to get user role (if your JWT contains it)
-function decodeJWT(token: string): { role?: string } | null {
+function decodeJWT(token: string): { role?: string; exp?: number } | null {
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -13,7 +12,15 @@ function decodeJWT(token: string): { role?: string } | null {
         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
     );
-    return JSON.parse(jsonPayload);
+    const decoded = JSON.parse(jsonPayload);
+
+    // Check if token is expired
+    if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+      console.log('🕐 Token expired');
+      return null;
+    }
+
+    return decoded;
   } catch (error) {
     console.error('Failed to decode JWT:', error);
     return null;
@@ -27,17 +34,28 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken')?.value;
   const refreshToken = request.cookies.get('refreshToken')?.value;
 
-  // Check if user is authenticated
-  const isAuthenticated = !!(accessToken || refreshToken);
-
-  // Try to get user role from JWT payload
+  let isAuthenticated = false;
   let userRole: string | undefined;
+
+  // ✅ Check if user has valid access token
   if (accessToken) {
     const decoded = decodeJWT(accessToken);
-    userRole = decoded?.role;
+    if (decoded) {
+      isAuthenticated = true;
+      userRole = decoded.role;
+    }
   }
 
-  console.log('🛡️ Middleware:', { pathname, isAuthenticated, userRole });
+  // ✅ CRITICAL: If access token is expired/missing BUT refresh token exists,
+  // treat as authenticated and let client-side interceptor handle refresh
+  const hasRefreshToken = !!refreshToken;
+
+  console.log('🛡️ Middleware:', {
+    pathname,
+    isAuthenticated,
+    hasRefreshToken,
+    userRole,
+  });
 
   // ============================================
   // PUBLIC ROUTES - Allow everyone
@@ -47,7 +65,7 @@ export async function middleware(request: NextRequest) {
     '/auth/login',
     '/auth/register',
     '/auth/verify',
-    '/unauthorized', // Allow everyone to see this page
+    '/unauthorized',
   ];
   const isPublicRoute = publicRoutes.some(
     (route) => pathname === route || pathname.startsWith('/auth/')
@@ -100,14 +118,21 @@ export async function middleware(request: NextRequest) {
   // PROTECT DASHBOARD ROUTES - Require authentication & check role
   // ============================================
   if (pathname.startsWith('/artist/') || pathname.startsWith('/fans/')) {
-    // ❌ NOT AUTHENTICATED → Redirect to login
-    if (!isAuthenticated) {
-      console.log(
-        '🔒 Unauthenticated user trying to access protected route, redirecting to login'
-      );
+    // ✅ CRITICAL FIX: Allow if has refresh token (let interceptor handle refresh)
+    if (!isAuthenticated && !hasRefreshToken) {
+      console.log('🔒 No valid tokens, redirecting to login');
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(loginUrl);
+    }
+
+    // ✅ If access token expired but refresh token exists, allow through
+    // The client-side interceptor will refresh the token
+    if (!isAuthenticated && hasRefreshToken) {
+      console.log(
+        '⏳ Access token expired but refresh token exists, allowing through for client refresh'
+      );
+      return NextResponse.next();
     }
 
     // ✅ AUTHENTICATED but WRONG ROLE → Redirect based on role

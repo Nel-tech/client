@@ -38,13 +38,14 @@ export function FeatureSection() {
                 label: 'Top Promoter Analytics:',
                 text: 'See a ranked leaderboard of your most influential fans.',
               },
-              {
-                label: 'Actionable Insights:',
-                text: 'Discover which tracks are being shared the most and by whom.',
-              },
+             {
+  label: 'Actionable Insights:',
+  text: 'Discover which tracks are being streamed and listened to the most.',
+},
+
             ]}
-            buttonText="See Artist Plans"
-            buttonHref="/pricing"
+            buttonText="GET STARTED"
+            buttonHref="/auth/signup-options"
             media={<ArtistMockup />}
             buttonVariant="outline"
           />
@@ -62,17 +63,18 @@ export function FeatureSection() {
             subtitle="For Fans"
             description="Your passion for music has real value. On Tropiqk, you earn tangible rewards like mobile airtime just for sharing and promoting the music you love."
             points={[
-              {
-                label: 'Share & Earn:',
-                text: 'Get a unique link for any track and earn coins when your friends listen.',
-              },
-              {
-                label: 'Real Rewards:',
-                text: 'Redeem your coins for mobile airtime and other valuable rewards.',
-              },
+             {
+  label: 'Listen & Earn:',
+  text: 'Get rewarded simply for listening to tracks and supporting emerging artists.',
+},
+{
+  label: 'Real Rewards:',
+  text: 'Redeem your rewards for mobile airtime and other useful benefits.',
+},
+
             ]}
-            buttonText="Start Earning"
-            buttonHref="/register"
+            buttonText="GET STARTED"
+            buttonHref="/auth/signup-options"
             media={<PhoneMockup />}
             reverse
           />

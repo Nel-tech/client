@@ -2,12 +2,11 @@ import {
   ArtistProfile,
   ProfileCompletion,
 } from '@/lib/api/endpoints/artist/type';
-import { FanProfile } from "@/lib/api/endpoints/fan/type";
 import { UserProfile, RoleType } from '@/lib/api/endpoints/user/type';
 import { UploadTrackResponse, UpdateTrackDetailsRequest,UploadTrackData } from "@/lib/api/endpoints/track/type";
 export interface ProfileState {
   artistProfile: ArtistProfile | null;
-  fanProfile: FanProfile | null;
+
   loading: boolean;
   initialized: boolean;
   error: string | null;
@@ -15,31 +14,25 @@ export interface ProfileState {
   cacheExpiry: number;
   profileCompletionStatus: ProfileCompletion | null;
 }
+export type RoleTypes = RoleType
+
 
 export interface ProfileActions {
-  // Artist profile actions
+ 
   setArtistProfile: (profile: ArtistProfile | null) => void;
   updateArtistProfile: (updates: Partial<ArtistProfile>) => void;
   clearArtistProfile: () => void;
   fetchArtistProfile: () => Promise<void>;
 
-  // Fan profile actions
-  setFanProfile: (profile: FanProfile | null) => void;
-  updateFanProfile: (updates: Partial<FanProfile>) => void;
-  clearFanProfile: () => void;
-
-  // State management
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setInitialized: (initialized: boolean) => void;
   clearError: () => void;
   clearAllProfiles: () => void;
 
-  // Cache management
   isDataStale: () => boolean;
   refreshCache: () => void;
 
-  // Profile operations
   fetchProfileCompletionStatus: () => Promise<void>;
   fetchAndSetArtistData: () => Promise<void>;
   getCurrentProfile: (userRole: string) => UserProfile;
@@ -50,10 +43,33 @@ export interface ProfileActions {
 export type ProfileStore = ProfileState & ProfileActions;
 
 // ===== UI COMPONENT PROPS =====
+// ===== UI COMPONENT PROPS =====
 
 export interface TabProps {
   activeTab: RoleType;
   setActiveTab: (tab: RoleType) => void;
+}
+
+export interface FileUploadProps {
+  type: 'thumbnail' | 'audio';
+  file: File | null;
+  preview?: string | null;
+  onFileChange: (file: File | null) => void;
+  error?: string;
+  maxAudioSizeMB?: number;
+}
+
+export interface TrackPreviewModalProps {
+  isOpen: boolean;
+  formData: UploadTrackData;
+  onSubmit: () => void;
+  onClose: () => void;
+  isLoading: boolean;
+}
+
+export interface TrackCardProps {
+  track: UploadTrackResponse;
+  onUpdate?: (updatedTrack: UpdateTrackDetailsRequest) => void;
 }
 
 export interface FileUploadProps {
@@ -169,6 +185,9 @@ export interface Task {
   completed: boolean;
 }
 
+// export interface OverviewTabProps {
+//   stats: any[];
+// }
 // export interface OverviewTabProps {
 //   stats: any[];
 // }

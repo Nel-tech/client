@@ -5,20 +5,16 @@ import {
   useUpdateArtistProfile,
   useProfilePictureUpload,
 } from '../queries/artist-queries';
-import {
-  BaseUser,
-  ArtistProfile,
-  ArtistFormData,
-  UserData,
-} from '@/helper/type';
 
+import { BaseUser, UserFormData} from '../api/endpoints/user/type';
+import { ArtistFormData, ArtistProfile } from '../api/endpoints/artist/type';
 interface ProfileHandlersConfig {
   setIsEditing: (editing: boolean) => void;
   refetch: () => void;
 }
 
 interface ProfileHandlersParams {
-  userData: UserData;
+  userData: UserFormData;
   artistFormData: ArtistFormData;
   user: BaseUser | null;
   artist: ArtistProfile | null;
@@ -26,9 +22,7 @@ interface ProfileHandlersParams {
   updateArtist: ReturnType<typeof useUpdateArtistProfile>;
   uploadProfilePic: ReturnType<typeof useProfilePictureUpload>;
   emailFlow: ReturnType<typeof useEmailChangeFlow>;
-  verificationCode: string;
-  setVerificationCode: (code: string) => void;
-  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+  setUserData: React.Dispatch<React.SetStateAction<UserFormData>>;
   setArtistFormData: React.Dispatch<React.SetStateAction<ArtistFormData>>;
   setIsEditing: (editing: boolean) => void;
   setResendCooldown: (cooldown: number) => void;
@@ -40,7 +34,7 @@ export const useProfileHandlers = ({ refetch }: ProfileHandlersConfig) => {
   const updateUsername = useUpdateusername({
     onSuccess: () => {
       toast.success('Profile updated successfully!');
-      refetch(); // ✅ Added refetch
+      refetch(); 
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update profile');
@@ -50,7 +44,7 @@ export const useProfileHandlers = ({ refetch }: ProfileHandlersConfig) => {
   const updateArtist = useUpdateArtistProfile({
     onSuccess: () => {
       toast.success('Artist profile updated successfully!');
-      refetch(); // ✅ Added refetch
+      refetch(); 
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update artist profile');
@@ -94,8 +88,6 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
     updateUsername,
     uploadProfilePic,
     emailFlow,
-    verificationCode,
-    setVerificationCode,
     setUserData,
     setArtistFormData,
     setIsEditing,
@@ -190,39 +182,14 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
     }
   };
 
-  const handleVerifyEmail = async () => {
-    // Validate verification code format
-    if (verificationCode.length !== 6) {
-      toast.error('Please enter a 6-digit verification code');
-      return;
-    }
-
-    if (!/^\d{6}$/.test(verificationCode)) {
-      toast.error('Verification code must contain only numbers');
-      return;
-    }
-
-    try {
-      await emailFlow.verifyChange({
-        verificationCode: verificationCode.trim(),
-      });
-      setVerificationCode('');
-      setIsEditing(false);
-      toast.success('Email verified successfully!');
-    } catch (error) {
-      console.error('Email verification error:', error);
-      // ✅ Error already handled by mutation's onError
-    }
-  };
 
   const handleResendCode = async () => {
     try {
       await emailFlow.resendCode();
       setResendCooldown(60);
-      toast.success('Verification code resent!');
+      toast.success('Email resent!');
     } catch (error) {
       console.error('Resend code error:', error);
-      // ✅ Error already handled by mutation's onError
     }
   };
 
@@ -241,7 +208,7 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
   };
 
   // Input change handlers
-  const handleUserInputChange = (field: keyof UserData, value: string) => {
+  const handleUserInputChange = (field: keyof UserFormData, value: string) => {
     setUserData((prev) => ({
       ...prev,
       [field]: value,
@@ -262,7 +229,6 @@ export const createProfileHandlers = (params: ProfileHandlersParams) => {
     handleImageUpload,
     handleEditToggle,
     handleSaveChanges,
-    handleVerifyEmail,
     handleResendCode,
     handleCancelEmailChange,
     handleUserInputChange,

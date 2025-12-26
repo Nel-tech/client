@@ -4,12 +4,12 @@ import Image from 'next/image';
 import { Upload, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-import { TrackResponse } from '@/helper/type';
+import { Track } from '@/lib/api/endpoints/track/type';
 
 interface EditTrackModalProps {
   isOpen: boolean;
   onClose: () => void;
-  track: TrackResponse;
+  track: Track;
   onSave: (fields: {
     title?: string;
     description?: string;

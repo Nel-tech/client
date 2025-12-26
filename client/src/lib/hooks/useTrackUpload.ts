@@ -1,6 +1,6 @@
 // hooks/useTrackUploadState.ts
 import { useState } from 'react';
-import { UploadTrackData } from '../../helper/type';
+import { UploadTrackData } from '../../lib/api/endpoints/track/type';
 
 export function useTrackUploadState() {
   const [trackData, setTrackData] = useState<UploadTrackData>({

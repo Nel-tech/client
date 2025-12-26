@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { BaseUser, ArtistProfile, ArtistFormData, UserData } from '@/helper/type';
-
+import { BaseUser, UserFormData } from '../api/endpoints/user/type';
+import { ArtistProfile, ArtistFormData } from '../api/endpoints/artist/type';
 export const useProfileData = (
   user: BaseUser | null,
   artist: ArtistProfile | null
 ) => {
-  const [userData, setUserData] = useState<UserData>({
+  const [userData, setUserData] = useState<UserFormData>({
     username: '',
     email: '',
   });

@@ -1,26 +1,27 @@
 'use client';
-
-import { Track } from '@/helper/type';
+import { Track } from '@/lib/api/endpoints/track/type';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Play, Pause, Pencil, Trash2, Music2, Clock, CheckCircle2, AlertCircle, Timer } from 'lucide-react';
+import { Play, Megaphone, Pause, Pencil, Trash2, Music2, Clock, CheckCircle2, AlertCircle, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useRouter } from 'next/navigation';
 
 interface TrackCardProps {
   track: Track;
   isPlaying?: boolean;
   onPlayToggle: (track: Track) => void;
+  onPromote: (trackId:string) => void;
   onEdit: (trackId: string) => void;
   onDelete: (trackId: string) => void;
 }
 
-const primary = '#ff6b35';
-const primaryHover = '#ff8a65';
+
 
 export default function TrackCard({
   track,
   isPlaying = false,
+  
   onPlayToggle,
   onEdit,
   onDelete,
@@ -31,6 +32,8 @@ export default function TrackCard({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const router = useRouter()
+ 
   const statusConfig = {
     APPROVED: { color: 'emerald', icon: CheckCircle2, label: 'Approved' },
     PENDING: { color: 'amber', icon: Timer, label: 'Pending' },
@@ -38,6 +41,10 @@ export default function TrackCard({
   };
 
   const status = statusConfig[track.status] || statusConfig.PENDING;
+
+  const redirect=(trackId:string)=>{
+    router.push(`/artist/dashboard/Tracks/${trackId}/promote`)
+  }
 
   return (
     <motion.div
@@ -106,6 +113,19 @@ export default function TrackCard({
                   <status.icon className="w-3.5 h-3.5 mr-1.5" />
                   <span className="text-xs font-medium tracking-wider">{status.label}</span>
                 </Badge>
+              )}
+
+
+              {track.status === 'APPROVED' && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => redirect(track?.id)}
+                className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#ff6b35] to-[#ff8a65] text-white text-xs font-semibold shadow-lg hover:shadow-xl transition-all"
+              >
+                <Megaphone className="w-3.5 h-3.5" />
+                Promote
+              </motion.button>
               )}
             </div>
 

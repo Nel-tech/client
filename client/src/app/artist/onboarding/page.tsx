@@ -14,6 +14,9 @@ import { useRouter } from 'next/navigation';
 
 export default function ArtistOnboardingForm() {
   const router = useRouter();
+ 
+
+
   const {
     register,
     handleSubmit,
@@ -22,10 +25,13 @@ export default function ArtistOnboardingForm() {
     resolver: zodResolver(OnboardingSchema),
   });
 
-  const { mutate: onboarding, isPending } = useArtistOnboarding({
-    onSuccess: () => {
+const { mutate: onboarding, isPending } = useArtistOnboarding({
+    onSuccess: async () => {
       toast.success('Onboarding completed!');
-      router.push('/artist/dashboard');
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      router.replace('/artist/dashboard');
     },
   });
 
@@ -34,7 +40,7 @@ export default function ArtistOnboardingForm() {
   };
 
   return (
-    <ProtectedRoute allowedRoles={['Artist']}>
+    <ProtectedRoute allowedRoles={['Artist']} requiresOnboarding={false}>
       <div className="min-h-screen flex bg-black text-white">
         {/* Left Side - Form */}
         <div className="w-full md:w-1/2 flex justify-center items-center p-6 md:p-10">

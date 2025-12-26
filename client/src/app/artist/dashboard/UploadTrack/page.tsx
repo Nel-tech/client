@@ -8,7 +8,7 @@ import { useTrackUploadState } from '@/lib/hooks/useTrackUpload';
 import TrackUploadForm from './components/TrackUploadForm';
 import TrackPreviewModal from './components/TrackPreviewModal';
 import { ArrowLeft } from 'lucide-react';
-import { UploadTrackData } from '@/helper/type';
+import { UploadTrackData } from '@/lib/api/endpoints/track/type';
 import { toast } from 'sonner';
 
 interface UploadTrackProps {

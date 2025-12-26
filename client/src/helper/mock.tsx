@@ -1,18 +1,24 @@
 import {
-  Search,
-  Share2,
-  Coins,
-  Smartphone,
-  Link,
-  Users,
-  Volume2,
-  Music,
+ ShieldCheck,
+ UserCheck,
+ UploadCloud,
+ Megaphone,
+ UserPlus,
+ Headphones,
+ Gift,
+Music,
   User,
   BarChart3,
+  Download,
+  Crown, 
+  Zap, 
+  TrendingUp, 
+  Users, 
+  Sparkles,
+  Layers,
 } from 'lucide-react';
 
 import {  Fan } from './type';
-// lib/config/artist-tiers.ts (or constants/tiers.ts)
 
 export enum ArtistTier {
   BASIC = 'BASIC',
@@ -20,127 +26,80 @@ export enum ArtistTier {
   ULTIMATE = 'ULTIMATE',
 }
 
-export const TIER_FEATURES: Record<
-  ArtistTier,
-  {
-    canDelete: boolean;
-    canEditUrl: boolean;
-    maxFileSize: number;
-    maxTracks: number;
-  }
-> = {
-  [ArtistTier.BASIC]: {
-    canDelete: false,
-    canEditUrl: false,
-    maxFileSize: 50,
-    maxTracks: 5,
-  },
-  [ArtistTier.PRO]: {
-    canDelete: true,
-    canEditUrl: true,
-    maxFileSize: 50,
-    maxTracks: 20,
-  },
-  [ArtistTier.ULTIMATE]: {
-    canDelete: true,
-    canEditUrl: true,
-    maxFileSize: 50,
-    maxTracks: -1, // unlimited
-  },
-};
-
-
-export const TIER_LEVELS: Record<ArtistTier, number> = {
-  [ArtistTier.BASIC]: 1,
-  [ArtistTier.PRO]: 2,
-  [ArtistTier.ULTIMATE]: 3,
-};
-
-export const TIER_EDIT_PERMISSIONS = {
-  BASIC: ['title', 'description', 'thumbnail'],
-  PRO: ['title', 'description', 'thumbnail', 'url'],
-  ULTIMATE: ['title', 'description', 'thumbnail', 'url'],
+export const CampaignStatus = {
+  PENDING_PAYMENT: "PENDING_PAYMENT",
+  ACTIVE: "ACTIVE",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
 } as const;
 
-export type EditableTrackField = 'title' | 'description' | 'thumbnail' | 'url';
+export type CampaignStatus =
+  (typeof CampaignStatus)[keyof typeof CampaignStatus];
+
 export const artistSteps = [
   {
     number: '01',
-    icon: Link,
-    headline: 'Link Your Music',
-    description: 'Easily add your tracks from YouTube. No uploads needed.',
+    icon: ShieldCheck,
+    headline: 'Authenticate Your Artist Profile',
+    description:
+      'Verify your account and set up your artist profile so fans know it’s really you.',
   },
   {
     number: '02',
-    icon: Users,
-    headline: 'Activate Your Fanbase',
+    icon: UserCheck,
+    headline: 'Complete Your Onboarding',
     description:
-      'Your fans get unique links to share your music, directly boosting your views.',
+      'Tell us about your sound, genre, and goals. This helps us connect you with the right audience.',
   },
   {
     number: '03',
-    icon: BarChart3,
-    headline: 'Track Your Growth',
+    icon: UploadCloud,
+    headline: 'Add Your Track',
     description:
-      'Our dashboard shows you exactly which fans are your top promoters.',
+      'Submit your song from YouTube and get it ready for real listeners to discover and enjoy.',
+  },
+  {
+    number: '04',
+    icon: Megaphone,
+    headline: 'Let Fans Power Your Growth',
+    description:
+      'Your fans share your music naturally, helping you reach new listeners and build real momentum.',
   },
 ];
 
 export const fanSteps = [
   {
     number: '01',
-    icon: Search,
-    headline: 'Discover New Music',
+    icon: Download,
+    headline: 'Download the App',
     description:
-      'Explore a library of tracks from talented upcoming artists from around the world.',
+      'Join Tropiqk and unlock a new way to discover fresh, upcoming music.',
   },
   {
     number: '02',
-    icon: Share2,
-    headline: 'Share & Promote',
+    icon: UserPlus,
+    headline: 'Sign Up & Get Set',
     description:
-      'Get your unique link for any track you love. Share it with your friends on social media, WhatsApp, or anywhere else.',
+      'Create your account, personalize your interests, and step into the music community.',
   },
   {
     number: '03',
-    icon: Coins,
-    headline: 'Earn Coins',
+    icon: Headphones,
+    headline: 'Explore & Enjoy New Sounds',
     description:
-      'When someone listens to the music you shared for at least 30 seconds, you earn Tropiqk Coins directly in your account.',
+      'Listen freely to emerging artists, discover new vibes, and support music you genuinely love.',
   },
   {
     number: '04',
-    icon: Smartphone,
-    headline: 'Get Free Airtime',
+    icon: Gift,
+    headline: 'Get Rewarded for Your Time',
     description:
-      "Your coins are real rewards. Redeem your Tropiqk Coins for mobile airtime on major networks. It's that simple.",
+      'Your support doesn’t go unnoticed. Earn rewards as you help great music travel further.',
   },
 ];
 
-export const PricingFeatures = {
-  basic: [
-    { text: '5 Active Tracks', included: true },
-    { text: 'Top 5 Promoters Leaderboard', included: true },
-    { text: 'Full Promoter Analytics', included: false },
-    { text: 'Per-Track Promoter Analytics', included: false },
-    { text: "'Double Coins' Campaigns", included: false },
-    { text: 'Priority Support', included: false },
-  ],
-  pro: [
-    { text: '50 Active Tracks', included: true },
-    { text: 'Full Promoter Analytics', included: true },
-    { text: 'Per-Track Promoter Analytics', included: true },
-    { text: "'Double Coins' Campaigns", included: false },
-    { text: 'Priority Support', included: false },
-  ],
-  ultimate: [
-    { text: 'Unlimited Active Tracks', included: true },
-    { text: 'Full Promoter Analytics', included: true },
-    { text: 'Per-Track Promoter Analytics', included: true },
-    { text: "'Double Coins' Campaigns (3/month)", included: true },
-    { text: 'Priority Support', included: true },
-  ],
-};
+
+
 
 export const FAQ = [
   // --- Questions for Artists ---
@@ -149,65 +108,65 @@ export const FAQ = [
     category: 'Artist',
     question: 'How do I get my music on Tropiqk?',
     answer:
-      "You don't upload music files directly! Simply create an artist profile and add the public links to your tracks from YouTube. We handle the rest, embedding the player so every listen on Tropiqk counts as a real stream on your YouTube channel.",
+      'Artists can upload their original, undiluted tracks directly from their device to Tropiqk. Once uploaded, your music becomes available to listeners on the platform, with optional promotion features if you choose to boost visibility.',
   },
   {
     id: 'artist-2',
     category: 'Artist',
-    question: 'How do I know which fans are promoting me?',
+    question: 'Do listens on Tropiqk count as streams?',
     answer:
-      'The Artist Dashboard is your command center. Even on our free BASIC plan, you can see a leaderboard of your Top 5 promoters. By upgrading to a PRO plan, you unlock the full list and can see which fans are promoting specific tracks.',
+      'Yes. Tropiqk tracks and records listening activity across the platform. Every play contributes to detailed analytics that show how your music is being discovered and streamed by real listeners.',
   },
   {
     id: 'artist-3',
     category: 'Artist',
-    question: 'Are the streams real? How does this help me?',
+    question: 'What insights do I get as an artist?',
     answer:
-      'Yes, absolutely. Because we use the official YouTube embedded player, every valid listen (30 seconds+) on Tropiqk is registered as a legitimate view on your YouTube video. This directly boosts your visibility, watch time, and helps you grow your channel organically.',
+      'You get access to performance data such as total plays, listening duration, and engagement trends. These insights help you understand how your tracks are performing and how listeners interact with your music.',
   },
   {
     id: 'artist-4',
     category: 'Artist',
-    question: 'What is a "Double Coins" Campaign?',
+    question: 'Is Tropiqk suitable for upcoming artists?',
     answer:
-      "This is a powerful promotional tool available to our ULTIMATE tier artists. You can select one of your tracks to temporarily offer double the coin rewards to fans who share it. It's the perfect way to supercharge promotion for a new single.",
+      'Absolutely. Tropiqk is built to help emerging artists get their songs out there, reach new listeners, and grow steadily without needing a large fan base to start.',
   },
 
   // --- Questions for Fans ---
   {
     id: 'fan-1',
     category: 'Fan',
-    question: 'How do I earn coins?',
+    question: 'What can I do as a fan on Tropiqk?',
     answer:
-      "It's simple! For any track on Tropiqk, you can generate a unique share link. When you share that link and someone clicks on it and listens to the track for at least 30 seconds, you automatically earn Tropiqk Coins in your account.",
+      'As a fan, you can discover new music from emerging artists and listen to their tracks directly on Tropiqk. By listening, you actively support artists and grow alongside them on their journey.',
   },
   {
     id: 'fan-2',
     category: 'Fan',
-    question: 'What can I use my coins for?',
+    question: 'Do I need to pay to use Tropiqk?',
     answer:
-      'Your coins have real value. You can redeem them directly within the app for mobile airtime on major networks. We are always working on adding new and exciting rewards for our community!',
+      'No. Tropiqk is free for listeners. You can explore music, enjoy tracks, and support artists without any subscription or payment.',
   },
   {
     id: 'fan-3',
     category: 'Fan',
-    question: 'Does it cost me anything to be a fan?',
+    question: 'Can I use Tropiqk on my phone?',
     answer:
-      'No, being a fan on Tropiqk is completely free! You can discover new music, share tracks, earn coins, and redeem rewards without ever paying anything. Your support for artists is what powers the platform.',
+      'Yes. A dedicated mobile app is currently in production. We’re working hard to deliver a smooth, powerful listening experience on mobile very soon.',
   },
   {
     id: 'fan-4',
     category: 'Fan',
-    question: "What if I share a link and don't get coins?",
+    question: 'How does listening on Tropiqk help artists?',
     answer:
-      "For a view to be valid and earn you coins, the listener must watch for at least 30 seconds. If they click away too soon, the view won't be counted. Some artists on our ULTIMATE plan may also offer higher coin rewards on specific tracks!",
+      'Every time you listen to a track, you help increase its visibility and engagement on the platform. Consistent listening helps artists understand their audience, gain momentum, and grow their presence naturally.',
   },
 ];
 
+
 export const links = [
   { name: 'How It Works', href: '/#how-it-works' },
-  { name: 'Pricing', href: '/#pricing' },
-  //   { name: 'About', href: '/#about' },
+  
   { name: 'Faq', href: '/#faq' },
 ];
 
@@ -305,17 +264,35 @@ export const profileTasks = [
   { id: 5, task: 'Add social links', completed: false },
 ];
 
+
+
 export const sidebarItems = [
   {
-    id: 'overview',
-    label: 'Overview',
-     route: '/artist/dashboard',
+    id: "overview",
+    label: "Overview",
+    route: "/artist/dashboard",
     icon: <BarChart3 className="h-5 w-5" />,
   },
-  { id: 'tracks', label: 'Tracks',  route: '/artist/dashboard/Tracks', icon: <Music className="h-5 w-5" /> },
-  // { id: 'fans', label: 'Fans', icon: <Users className="h-5 w-5" /> },
-  { id: 'profile', label: 'Profile',  route: '/artist/dashboard/Profile',icon: <User className="h-5 w-5" /> },
+  {
+    id: "tracks",
+    label: "Tracks",
+    route: "/artist/dashboard/Tracks",
+    icon: <Music className="h-5 w-5" />,
+  },
+  {
+    id: "plans",
+    label: "Plans", // 👈 replaces “Tiers”
+    route: "/artist/dashboard/plans",
+    icon: <Layers className="h-5 w-5" />,
+  },
+  {
+    id: "profile",
+    label: "Profile",
+    route: "/artist/dashboard/Profile",
+    icon: <User className="h-5 w-5" />,
+  },
 ];
+
 
 // data/tracks.ts
 export interface Track {
@@ -341,3 +318,48 @@ export const mockTracks: Track[] = [
   },
   // … the rest of the 5 tracks (same as in your original file)
 ];
+
+export const tierData = {
+  BASIC: {
+    name: 'Basic',
+    icon: Sparkles,
+    color: 'from-zinc-600 to-zinc-700',
+    borderColor: 'border-zinc-700',
+    budget: 0,
+    maxUpload: 5,
+    features: [
+      { icon: TrendingUp, label: 'Low Feed Boost', available: true },
+      { icon: BarChart3, label: 'Analytics', available: false },
+      { icon: Users, label: 'Top Listeners', available: false },
+      { icon: Crown, label: 'Verified Badge', available: false },
+    ],
+  },
+  PRO: {
+    name: 'Pro',
+    icon: Zap,
+    color: 'from-[#ff6b35] to-[#ff8a65]',
+    borderColor: 'border-[#ff6b35]',
+    budget: 5000,
+    maxUpload: 15,
+    features: [
+      { icon: TrendingUp, label: 'Medium Feed Boost', available: true },
+      { icon: BarChart3, label: 'Analytics', available: true },
+      { icon: Users, label: 'Top Listeners', available: false },
+      { icon: Crown, label: 'Verified Badge', available: false },
+    ],
+  },
+  ULTIMATE: {
+    name: 'Ultimate',
+    icon: Crown,
+   color: 'from-[#ff6b35] to-[#ff8a65]',
+    borderColor: 'border-[#ff6b35]',
+    budget: 15000,
+    maxUpload: 50,
+    features: [
+      { icon: TrendingUp, label: 'High Feed Boost', available: true },
+      { icon: BarChart3, label: 'Full Analytics', available: true },
+      { icon: Users, label: 'Top Listeners', available: true },
+      { icon: Crown, label: 'Verified Badge', available: true },
+    ],
+  },
+};

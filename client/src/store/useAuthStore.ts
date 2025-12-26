@@ -9,6 +9,7 @@ import {
   register,
 } from '@/lib/api/endpoints/user/user';
 import { TRegistrationSchema, TLoginSchema } from '@/lib/validators/auth';
+import { useProfileStore } from '@/store/useProfileStore'; // Import ProfileStore
 
 interface AuthState {
   user: BaseUser | null;
@@ -24,7 +25,7 @@ interface AuthActions {
   verifyEmailAction: (data: {
     email: string;
     code: string;
-  }) => Promise<void>;
+  }) => Promise<{ user: BaseUser; expiresIn: number }>;
   loginAction: (data: TLoginSchema) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: BaseUser | null) => void;
@@ -83,10 +84,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
     }
   },
 
-  verifyEmailAction: async (data: {
-    email: string;
-    code: string;
-  }) => {
+  verifyEmailAction: async (data: { email: string; code: string }) => {
     set({ loading: true, error: null });
     try {
       const response = await verifyEmail(data);
@@ -99,7 +97,8 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         pendingVerificationEmail: null,
       });
 
-      console.log('Response User', response.user);
+      console.log('✅ Email verified, user set:', response.user);
+      return response;
     } catch (error) {
       console.error('Verification failed:', error);
       const errorMessage = getErrorMessage(error);
@@ -122,7 +121,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         error: null,
         pendingVerificationEmail: null,
       });
-      console.log('Response User LoginAction', user);
+      console.log('✅ Login successful, user set:', user);
     } catch (error) {
       console.error('Login failed:', error);
 
@@ -151,44 +150,51 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
     set({ loading: true, error: null });
     try {
       await logoutApi();
+
+      // Clear profile store when logging out
+      useProfileStore.getState().clearAllProfiles();
+
       set({
         user: null,
         loading: false,
-        initialized: true, // Keep initialized as true
+        initialized: true,
         error: null,
         pendingVerificationEmail: null,
       });
+      console.log('✅ Logout successful');
     } catch (error) {
       console.error('Logout error:', error);
+
+      // Still clear stores even if API call fails
+      useProfileStore.getState().clearAllProfiles();
+
       set({
         user: null,
         loading: false,
-        initialized: true, // Keep initialized as true
+        initialized: true,
         error: getErrorMessage(error),
       });
     }
   },
 
   setUser: (user) => {
+    console.log('🔄 setUser called with:', user);
     set({ user, initialized: true, error: null });
   },
 
   initializeAuth: async () => {
     const currentState = get();
 
-    // Prevent multiple simultaneous initializations
     if (currentState.loading) {
       console.log('⏸️ Init already in progress');
       return;
     }
 
-    // Don't re-initialize if already done
     if (currentState.initialized) {
       console.log('✅ Already initialized');
       return;
     }
 
-    // Don't initialize if we're refreshing tokens
     if (currentState.isRefreshing) {
       console.log('⏸️ Skipping initializeAuth - token refresh in progress');
       return;
@@ -205,11 +211,10 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         error: null,
       });
       console.log('✅ Auth initialized successfully');
-      console.log('CurrentUser', user);
+      console.log('CurrentUser:', user);
     } catch (error) {
       console.error('Auth initialization failed:', error);
 
-      // If it's a 401 error, user is not authenticated (this is expected)
       if (error instanceof AxiosError && error.response?.status === 401) {
         set({
           user: null,
@@ -221,7 +226,6 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         return;
       }
 
-      // For other errors, set error message
       const errorMessage = getErrorMessage(error);
       set({
         user: null,
@@ -237,7 +241,6 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
 
     console.log('🗑️ clearAuth called');
 
-    // CRITICAL: Don't clear auth if we're in the middle of refreshing tokens
     if (currentState.isRefreshing) {
       console.warn(
         '⚠️ Attempted to clear auth during token refresh - ignoring'
@@ -245,11 +248,13 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
       return;
     }
 
-    // IMPORTANT: Keep initialized as true to prevent re-initialization
+    // Clear profile store too
+    useProfileStore.getState().clearAllProfiles();
+
     set({
       user: null,
       loading: false,
-      initialized: true, // Changed from false to true
+      initialized: true,
       isRefreshing: false,
       error: null,
       pendingVerificationEmail: null,

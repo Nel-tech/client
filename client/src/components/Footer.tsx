@@ -1,20 +1,21 @@
 'use client';
-import { TropiqkLogo } from './Logo';
+
 import Link from 'next/link';
-import { links } from '@/helper/mock';
-import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { usePathname } from 'next/navigation';
 import { Linkedin, X } from 'lucide-react';
+import { TropiqkLogo } from './Logo';
+import { links } from '@/helper/mock';
 
 const socials = [
   {
     href: 'https://www.linkedin.com/in/nelson-adegbasa-858b88365',
-    icon: <Linkedin className="size-6" />,
+    icon: Linkedin,
     label: 'LinkedIn',
   },
   {
     href: 'https://x.com/manlike_favour',
-    icon: <X className="size-6" />,
+    icon: X,
     label: 'X (Twitter)',
   },
 ];
@@ -26,12 +27,10 @@ export default function FooterSection() {
     <Link
       href={item.href}
       className={clsx(
-        'text-lg font-poppins font-semibold transition-colors duration-300',
-        {
-          'text-white relative after:absolute after:bottom-[-6px] after:left-0 after:w-full after:h-[2px] after:bg-[#FF6B35]':
-            pathname === item.href,
-          'text-neutral-400 hover:text-white': pathname !== item.href,
-        }
+        'text-sm font-poppins font-medium tracking-wide transition-colors duration-300',
+        pathname === item.href
+          ? 'text-white'
+          : 'text-neutral-500 hover:text-white'
       )}
     >
       {item.name}
@@ -39,67 +38,73 @@ export default function FooterSection() {
   );
 
   return (
-    <footer className="bg-muted py-16 mt-[5rem]">
-      <div className="mx-auto max-w-5xl px-6 text-center">
-        {/* Logo */}
-        <Link href="/" aria-label="go home" className="mx-auto block size-fit">
-          <TropiqkLogo />
-        </Link>
+    <footer className="relative mt-32 bg-black border-t border-white/10">
+      {/* Soft Glow Accent */}
+      <div className="pointer-events-none absolute inset-x-0 -top-24 h-24 bg-gradient-to-t from-[#FF6B35]/20 to-transparent blur-2xl" />
 
-        {/* Tagline */}
-        {/* <p className="mt-4 max-w-md mx-auto text-neutral-400 text-sm md:text-base font-poppins">
-          Tropiqk empowers artists and fans through share-to-earn links,
-          boosting streams while rewarding engagement.
-        </p> */}
-
-        {/* Get Started Button */}
-        {/* <div className="mt-6">
-            <Button
-              className="cursor-pointer font-poppins bg-[#FF6B35] text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-[#FF6B35]/40 transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl hover:shadow-[#FF6B35]/50 hover:-translate-y-0.5 active:scale-95 active:shadow-md"
-            >
-              Get Started
-        
-            <Link href="/">Get Started</Link>
-          </Button>
-        </div> */}
-
-        {/* Navigation */}
-        <div className="my-8 flex flex-wrap justify-center gap-6">
-          {links.map((link, index) => (
-            <NavLink key={index} item={link} />
-          ))}
-        </div>
-
-        {/* Social Links */}
-        <div className="my-8 flex justify-center gap-6">
-          {socials.map((social, index) => (
-            <Link
-              key={index}
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-400 hover:text-white transition-colors duration-300"
-              aria-label={social.label}
-            >
-              {social.icon}
+      <div className="mx-auto max-w-6xl px-6 py-16">
+        {/* Top Row */}
+        <div className="flex flex-col items-center gap-10 text-center md:flex-row md:justify-between md:text-left">
+          {/* Brand */}
+          <div className="max-w-sm">
+            <Link href="/" aria-label="go home" className="inline-block">
+              <TropiqkLogo />
             </Link>
-          ))}
+
+            <p className="mt-4 text-sm font-poppins text-neutral-400 leading-relaxed">
+              Discover emerging artists. Support real music.  
+              Get rewarded for listening.
+            </p>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4 md:justify-end">
+            {links.map((link, index) => (
+              <NavLink key={index} item={link} />
+            ))}
+          </nav>
         </div>
 
-        {/* Privacy + Terms */}
-        <div className="mt-4 flex font-poppins justify-center gap-6 text-base text-neutral-400">
-          <Link href="/privacy-policy" className="hover:text-white">
-            Privacy Policy
-          </Link>
-          <Link href="/terms" className="hover:text-white">
-            Terms & Conditions
-          </Link>
+        {/* Divider */}
+        <div className="my-12 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        {/* Bottom Row */}
+        <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between">
+          {/* Legal */}
+          <div className="flex gap-6 text-sm font-poppins text-neutral-500">
+            <Link href="/privacy-policy" className="hover:text-white">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-white">
+              Terms & Conditions
+            </Link>
+          </div>
+
+          {/* Socials */}
+          <div className="flex items-center gap-6">
+            {socials.map((social, index) => {
+              const Icon = social.icon;
+              return (
+                <Link
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="group relative text-neutral-500 transition-colors hover:text-white"
+                >
+                  <Icon className="size-5" />
+                  <span className="absolute -bottom-2 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-[#FF6B35] opacity-0 transition-opacity group-hover:opacity-100" />
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         {/* Copyright */}
-        {/* <span className="text-white font-poppins block text-center text-base mt-6">
-          © {new Date().getFullYear()} Tropiqk, All rights reserved
-        </span> */}
+        <div className="mt-10 text-center text-xs font-poppins text-neutral-600">
+          © {new Date().getFullYear()} Tropiqk. All rights reserved.
+        </div>
       </div>
     </footer>
   );

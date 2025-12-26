@@ -62,13 +62,7 @@ export const useArtistPermissions = () => {
   });
 };
 
-// ============================================
-// MUTATION HOOKS (for creating/updating/deleting)
-// ============================================
 
-/**
- * Upload a new track
- */
 export const useUploadTrack = (
   options?: UseMutationOptions<UploadTrackResponse, Error, UploadTrackData>
 ) => {
@@ -98,16 +92,12 @@ export const useUpdateTrackDetails = (
   const queryClient = useQueryClient(); 
 
   return useMutation<any, Error, UpdateTrackDetailsRequest>({
-    mutationFn: (data: UpdateTrackDetailsRequest) => updateTrackDetails(data), // ✅ Fixed
-    mutationFn: (data: UpdateTrackDetailsRequest) => updateTrackDetails(data), // ✅ Fixed
+    mutationFn: (data: UpdateTrackDetailsRequest) => updateTrackDetails(data), 
     onSuccess: (data, variables, context) => {
-      // ✅ Fixed: using variables.id instead of variables
       queryClient.invalidateQueries({ queryKey: ['track', variables.trackId] });
       
-      // Invalidate the track list
       queryClient.invalidateQueries({ queryKey: ['artistTracks'] });
 
-      // Call custom onSuccess if provided
       options?.onSuccess?.(data, variables, context);
     },
     ...options,
@@ -136,3 +126,9 @@ export const useDeleteTrack = (
     ...options,
   });
 };
+
+/**
+ * Create Campaign
+ * 
+ */
+

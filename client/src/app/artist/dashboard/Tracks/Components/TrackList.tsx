@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Track } from "@/helper/type";
+import { Track } from "@/lib/api/endpoints/track/type";
 import TrackCard from "./TrackCard";
-import { Music, Trash2 } from "lucide-react";
+import { Music} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "./ui/Loading";
@@ -13,6 +13,7 @@ import { EditTrackDetails } from "./EditTrackDetails";
 import { useDeleteTrack } from "@/lib/queries/track-queries";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+
 interface TrackListProps {
   tracks: Track[];
   isLoading: boolean;
@@ -21,6 +22,7 @@ interface TrackListProps {
   isPlaying: boolean;
   currentTime: number;
   onPlayToggle: (track: Track) => void;
+  onPromote:(track:Track) => void;
   onSeek: (time: number) => void;
 }
 
@@ -38,7 +40,6 @@ export default function TrackList({
   const searchParams = useSearchParams();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  // Get editing track ID from URL
   const editingTrackId = searchParams.get("edit");
   const deleteMutation = useDeleteTrack()
 
@@ -55,6 +56,8 @@ export default function TrackList({
   const handleDelete = (trackId: string) => {
     setDeleteConfirm(trackId);
   };
+
+
 
   const confirmDelete = async (trackId: string) => {
     try {
@@ -124,6 +127,8 @@ export default function TrackList({
           onOpenChange={handleEditOpenChange}
         />
       )}
+
+      
 
       {/* Delete Confirmation Modal */}
       <AnimatePresence>

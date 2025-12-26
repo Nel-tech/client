@@ -22,7 +22,6 @@ import {
 
 const navigation = [
   { name: 'How It Works', href: '/#how-it-works' },
-  { name: 'Pricing', href: '/#pricing' },
   { name: 'Faq', href: '/#faq' },
 ];
 
@@ -220,7 +219,7 @@ export function Nav() {
                         whileTap={{ scale: 0.98 }}
                       >
                         <Link
-                          href="/auth/register"
+                          href="/auth/signup-options"
                           onClick={() => setMobileMenuOpen(false)}
                           className="cursor-pointer font-poppins bg-[#FF6B35] text-white font-semibold px-5 py-2.5 rounded-lg shadow-md shadow-[#FF6B35]/40 transition-all duration-300 ease-in-out hover:bg-[#e85f2d] hover:shadow-xl hover:shadow-[#FF6B35]/50 block text-center"
                         >

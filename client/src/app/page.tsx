@@ -2,10 +2,10 @@ import { Nav } from '@/components/Nav';
 import { HeroSection } from './Home/HeroSection';
 import { HowItWorksSection } from './Home/How-it-works';
 import { FeatureSection } from './Home/Feature-Section';
-import Pricing from '@/app/Home/Pricng';
+// import Pricing from '@/app/Home/Pricng';
 import { FAQSection } from './Home/Faq';
 import FooterSection from '@/components/Footer';
-import BaseFooter from '@/components/BaseFooter';
+// import BaseFooter from '@/components/BaseFooter';
 
 function page() {
   return (
@@ -14,10 +14,10 @@ function page() {
       <HeroSection />
       <HowItWorksSection />
       <FeatureSection />
-      <Pricing />
+      {/* <Pricing /> */}
       <FAQSection />
       <FooterSection />
-      <BaseFooter />
+      {/* <BaseFooter /> */}
     </div>
   );
 }

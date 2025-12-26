@@ -1,6 +1,6 @@
-import { ProfileBase, UserBase, StandardResponse, RoleType } from "@/lib/api/endpoints/user/type";
+import { ProfileBase, BaseUser, StandardResponse, RoleType } from "@/lib/api/endpoints/user/type";
 
-export interface ArtistProfile extends ProfileBase, UserBase {
+export interface ArtistProfile extends ProfileBase, BaseUser {
   fullName: string | null;
   stageName: string | null;
   bio: string | null;
@@ -39,3 +39,5 @@ export interface OnboardingResponse extends StandardResponse {
   role: RoleType;
   artist: ArtistProfile;
 }
+
+

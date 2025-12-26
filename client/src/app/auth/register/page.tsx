@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { logoVariants } from '@/components/Variants';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-// import BaseFooter from '@/components/BaseFooter';
 import { useRegister } from '@/lib/queries/auth-queries';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/store/useAuthStore';
+import { notFound } from 'next/navigation';
+import {useEffect} from 'react'
 
 
 const Register = () => {
@@ -20,7 +21,15 @@ const Register = () => {
   const roleParams = useSearchParams();
   const role = roleParams.get('role');
 
-  const validRole = role === 'Fan' || role === 'Artist' ? role : undefined;
+  const validRole =  role === 'Artist' ? role : undefined;
+
+
+  useEffect(() => {
+
+    if(validRole === undefined){
+    notFound();
+    }
+  }, [validRole])
 
   const {
     register,
@@ -54,7 +63,7 @@ const onSubmit = (formData: TRegistrationSchema) => {
 
   const completeFormData = {
     ...formData,
-    role: validRole as 'Fan' | 'Artist',
+    role: validRole as  'Artist',
   };
 
   registerUser(completeFormData);
@@ -78,7 +87,7 @@ const onSubmit = (formData: TRegistrationSchema) => {
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div>
           <h1 className="text-xl text-white text-center font-poppins tracking-wide">
-            Creating a {validRole || 'New'} Account
+            Creating an {validRole || 'New'} Account
           </h1>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

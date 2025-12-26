@@ -1,7 +1,6 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-
 
 import { ArtistProfile } from '@/lib/api/endpoints/artist/type';
 import { ProfileState, ProfileStore } from '@/helper/type';
@@ -12,27 +11,27 @@ import {
 
 const initialState: ProfileState = {
   artistProfile: null,
-  fanProfile: null,
   loading: false,
   initialized: false,
   error: null,
   lastFetched: null,
-  cacheExpiry: 2 * 60 * 1000, // 2 minutes (shorter for production)
+  cacheExpiry: 2 * 60 * 1000,
   profileCompletionStatus: null,
 };
 
-// NO PERSIST MIDDLEWARE - Just devtools and immer
 export const useProfileStore = create<ProfileStore>()(
-  devtools(
+  persist(
     immer((set, get) => ({
       ...initialState,
 
+      // Basic setters
       setArtistProfile: (profile) =>
         set((state) => {
           state.artistProfile = profile;
           state.lastFetched = Date.now();
           state.error = null;
           state.initialized = true;
+          console.log('✅ Setting profile:', profile);
         }),
 
       updateArtistProfile: (updates) =>
@@ -47,44 +46,19 @@ export const useProfileStore = create<ProfileStore>()(
         set((state) => {
           state.artistProfile = null;
         }),
-
-      setFanProfile: (profile) =>
-        set((state) => {
-          state.fanProfile = profile;
-          state.lastFetched = Date.now();
-          state.error = null;
-          state.initialized = true;
-        }),
-
-      updateFanProfile: (updates) =>
-        set((state) => {
-          if (state.fanProfile) {
-            Object.assign(state.fanProfile, updates);
-            state.lastFetched = Date.now();
-          }
-        }),
-
-      clearFanProfile: () =>
-        set((state) => {
-          state.fanProfile = null;
-        }),
-
       setLoading: (loading) =>
         set((state) => {
           state.loading = loading;
         }),
-
       setError: (error) =>
         set((state) => {
           state.error = error;
           state.loading = false;
         }),
-
       setInitialized: (initialized) =>
         set((state) => {
           state.initialized = initialized;
         }),
-
       clearError: () =>
         set((state) => {
           state.error = null;
@@ -93,14 +67,13 @@ export const useProfileStore = create<ProfileStore>()(
       clearAllProfiles: () =>
         set((state) => {
           state.artistProfile = null;
-          state.fanProfile = null;
           state.profileCompletionStatus = null;
           state.lastFetched = null;
           state.error = null;
           state.initialized = false;
         }),
 
-      // Cache management (memory only)
+      // Cache management
       isDataStale: () => {
         const { lastFetched, cacheExpiry } = get();
         if (!lastFetched) return true;
@@ -112,15 +85,21 @@ export const useProfileStore = create<ProfileStore>()(
           state.lastFetched = Date.now();
         }),
 
-      // API methods
+      // API calls
       fetchArtistProfile: async () => {
+        const state = get();
+
+        if (state.loading) return state.artistProfile;
+
         try {
           set((state) => {
             state.loading = true;
             state.error = null;
           });
 
+          console.log('📡 Fetching artist profile from API...');
           const profile = await getArtistProfile();
+          console.log('✅ Profile fetched:', profile);
 
           set((state) => {
             state.artistProfile = profile;
@@ -128,7 +107,10 @@ export const useProfileStore = create<ProfileStore>()(
             state.loading = false;
             state.initialized = true;
           });
+
+          return profile;
         } catch (error) {
+          console.error('❌ Failed to fetch profile:', error);
           set((state) => {
             state.error =
               error instanceof Error
@@ -143,10 +125,10 @@ export const useProfileStore = create<ProfileStore>()(
       fetchProfileCompletionStatus: async () => {
         try {
           const completionStatus = await getProfileCompletionStatus();
-
           set((state) => {
             state.profileCompletionStatus = completionStatus;
           });
+          return completionStatus;
         } catch (error) {
           console.error('Failed to fetch profile completion status:', error);
         }
@@ -165,6 +147,7 @@ export const useProfileStore = create<ProfileStore>()(
           ]);
 
           if (profile.status === 'fulfilled') {
+            console.log('✅ fetchAndSetArtistData got:', profile.value);
             set((state) => {
               state.artistProfile = profile.value;
               state.lastFetched = Date.now();
@@ -186,22 +169,14 @@ export const useProfileStore = create<ProfileStore>()(
         }
       },
 
-      // Helper methods
+      // Profile utilities
       getCurrentProfile: (userRole) => {
         const state = get();
-        switch (userRole.toLowerCase()) {
-          case 'artist':
-            return state.artistProfile;
-          case 'fan':
-            return state.fanProfile;
-          default:
-            return null;
-        }
+        return userRole.toLowerCase() === 'artist' ? state.artistProfile : null;
       },
 
       hasProfile: (userRole) => {
-        const profile = get().getCurrentProfile(userRole);
-        return profile !== null;
+        return get().getCurrentProfile(userRole) !== null;
       },
 
       getProfileCompletion: (userRole) => {
@@ -211,11 +186,6 @@ export const useProfileStore = create<ProfileStore>()(
           return { percentage: 0, missingFields: ['All fields'] };
         }
 
-        let totalFields = 0;
-        let completedFields = 0;
-        const missingFields: string[] = [];
-        const commonRequiredFields = ['profilePic'];
-
         if (userRole.toLowerCase() === 'artist' && 'fullName' in profile) {
           const artistProfile = profile as ArtistProfile;
           const requiredFields = [
@@ -223,39 +193,40 @@ export const useProfileStore = create<ProfileStore>()(
             'stageName',
             'bio',
             'genre',
-            ...commonRequiredFields,
+            'profilePic',
           ];
 
-          totalFields = requiredFields.length;
+          const missingFields = requiredFields.filter(
+            (field) => !artistProfile[field as keyof ArtistProfile]
+          );
 
-          requiredFields.forEach((field) => {
-            if (artistProfile[field as keyof ArtistProfile]) {
-              completedFields++;
-            } else {
-              missingFields.push(field);
-            }
-          });
-        }
-        {
+          const completedFields = requiredFields.length - missingFields.length;
+          const percentage = Math.round(
+            (completedFields / requiredFields.length) * 100
+          );
+
+          return { percentage, missingFields };
         }
 
-        const percentage =
-          totalFields > 0
-            ? Math.round((completedFields / totalFields) * 100)
-            : 0;
-        return { percentage, missingFields };
+        return { percentage: 0, missingFields: [] };
       },
     })),
-    { name: 'ProfileStore' }
+    {
+      name: 'profile-storage',
+      version: 2, // Increment this to clear old cached data
+      partialize: (state) => ({
+        artistProfile: state.artistProfile,
+        profileCompletionStatus: state.profileCompletionStatus,
+        initialized: state.initialized,
+        lastFetched: state.lastFetched,
+      }),
+    }
   )
 );
 
-// ============================================================
-// SELECTOR HOOKS - For reading state (these won't cause re-renders)
-// ============================================================
+// Hooks
 export const useArtistProfile = () =>
   useProfileStore((state) => state.artistProfile);
-export const useFanProfile = () => useProfileStore((state) => state.fanProfile);
 export const useProfileLoading = () =>
   useProfileStore((state) => state.loading);
 export const useProfileError = () => useProfileStore((state) => state.error);
@@ -270,21 +241,13 @@ export const useHasProfile = (userRole: string) =>
 export const useIsProfileDataStale = () =>
   useProfileStore((state) => state.isDataStale());
 
-// ============================================================
-// ACTION HOOKS - For calling methods (stable references)
-// ============================================================
+// Actions
 export const useSetArtistProfile = () =>
   useProfileStore((state) => state.setArtistProfile);
 export const useUpdateArtistProfile = () =>
   useProfileStore((state) => state.updateArtistProfile);
 export const useClearArtistProfile = () =>
   useProfileStore((state) => state.clearArtistProfile);
-export const useSetFanProfile = () =>
-  useProfileStore((state) => state.setFanProfile);
-export const useUpdateFanProfile = () =>
-  useProfileStore((state) => state.updateFanProfile);
-export const useClearFanProfile = () =>
-  useProfileStore((state) => state.clearFanProfile);
 export const useSetLoading = () => useProfileStore((state) => state.setLoading);
 export const useSetError = () => useProfileStore((state) => state.setError);
 export const useClearError = () => useProfileStore((state) => state.clearError);
